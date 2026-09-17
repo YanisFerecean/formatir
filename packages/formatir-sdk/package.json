@@ -12,6 +12,15 @@
     "form-analytics",
     "privacy"
   ],
+  "homepage": "https://yanisferecean.github.io/formatir/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YanisFerecean/formatir.git",
+    "directory": "packages/formatir-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/YanisFerecean/formatir/issues"
+  },
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.cjs",
