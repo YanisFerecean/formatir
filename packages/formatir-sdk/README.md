@@ -1,5 +1,10 @@
 # Formatir
 
+[![npm](https://img.shields.io/npm/v/formatir?color=7c3aed)](https://www.npmjs.com/package/formatir)
+[![bundle size](https://img.shields.io/badge/gzipped-4.48%20KB-22d3ee)](https://bundlephobia.com/package/formatir)
+[![dependencies](https://img.shields.io/badge/dependencies-0-34d399)](https://www.npmjs.com/package/formatir?activeTab=dependencies)
+[![license](https://img.shields.io/npm/l/formatir?color=64748b)](../../LICENSE)
+
 > Privacy-first behaviour analytics for web forms and application processes.
 > Zero dependencies, **< 5 KB gzipped**, works with plain HTML, React, Vue and SPAs.
 

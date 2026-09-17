@@ -1,5 +1,13 @@
 # Formatir
 
+[![npm](https://img.shields.io/npm/v/formatir?color=7c3aed)](https://www.npmjs.com/package/formatir)
+[![CI](https://github.com/YanisFerecean/formatir/actions/workflows/ci.yml/badge.svg)](https://github.com/YanisFerecean/formatir/actions/workflows/ci.yml)
+[![Pages](https://github.com/YanisFerecean/formatir/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/YanisFerecean/formatir/actions/workflows/deploy-pages.yml)
+[![license](https://img.shields.io/npm/l/formatir?color=64748b)](LICENSE)
+
+**Live-Demo: [yanisferecean.github.io/formatir](https://yanisferecean.github.io/formatir/)** ·
+**npm: [`formatir`](https://www.npmjs.com/package/formatir)**
+
 > Verhaltensbasierte Analytik für Webformulare und Bewerbungsprozesse.
 > Ein abhängigkeitsfreies TypeScript-SDK (**4,5 KB gzipped**) plus interaktive Showcase-App.
 
@@ -25,6 +33,9 @@ JavaScript-Fehler - in Echtzeit und ohne eine einzige Klartext-Eingabe zu erfass
 ## Schnellstart
 
 ```bash
+npm i formatir   # das SDK in ein bestehendes Projekt
+
+# oder dieses Monorepo:
 pnpm install     # pnpm >= 10, Node >= 20.19
 pnpm build       # SDK bauen (inkl. Größenbudget), danach die Showcase-App
 pnpm dev         # Showcase auf http://localhost:5173
