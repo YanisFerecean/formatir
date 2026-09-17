@@ -1,0 +1,22 @@
+{
+  "name": "formatir-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Formatir - behaviour analytics for web forms and application processes",
+  "type": "module",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter showcase dev",
+    "preview": "pnpm --filter showcase preview",
+    "typecheck": "pnpm -r typecheck",
+    "size": "pnpm --filter formatir size",
+    "clean": "pnpm -r exec rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
