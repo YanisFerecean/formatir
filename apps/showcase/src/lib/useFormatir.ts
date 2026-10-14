@@ -3,6 +3,23 @@ import { init, type FormatirEvent, type FormatirInstance, type FormatirSnapshot 
 import { autofill, funnel, paste, revisits, thrash } from 'formatir/extras';
 
 const MAX_EVENTS = 120;
+/** Cap of the full log exposed on `window` for agents and tests. */
+const MAX_LOG = 1000;
+
+/** Name of the DOM event dispatched on `window` for every Formatir event. */
+export const EVENT_NAME = 'formatir:event';
+
+declare global {
+  interface Window {
+    /** The demo's Formatir instance - for agents, tests and the console. */
+    formatir?: FormatirInstance;
+    /** Every event of this session, oldest first (capped at 1000). */
+    formatirEvents?: FormatirEvent[];
+  }
+  interface WindowEventMap {
+    'formatir:event': CustomEvent<FormatirEvent>;
+  }
+}
 
 export interface Telemetry {
   formatir: FormatirInstance | null;
@@ -21,6 +38,15 @@ export function useFormatir(): Telemetry {
   const [snapshot, setSnapshot] = useState<FormatirSnapshot | null>(null);
 
   useEffect(() => {
+    // Machine-readable view of the session (see /llms.txt). `onEvent` also sees
+    // the `session_start` emitted inside init(), which `on()` would miss.
+    const log: FormatirEvent[] = [];
+    const record = (event: FormatirEvent) => {
+      log.push(event);
+      if (log.length > MAX_LOG) log.shift();
+      window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: event }));
+    };
+
     const instance = init({
       appId: 'formatir-showcase',
       // Only the application form is observed - clicks on the rest of the page
@@ -33,7 +59,10 @@ export function useFormatir(): Telemetry {
       flushIntervalMs: 0,
       thresholds: { hesitationMs: 3000, rageClicks: 3, rageWindowMs: 500 },
       plugins: [paste(), autofill(), revisits(), funnel(), thrash()],
+      onEvent: record,
     });
+    window.formatir = instance;
+    window.formatirEvents = log;
 
     setFormatir(instance);
     setSnapshot(instance.getSnapshot());
@@ -50,9 +79,14 @@ export function useFormatir(): Telemetry {
       off();
       window.clearInterval(timer);
       instance.destroy();
+      if (window.formatir === instance) {
+        delete window.formatir;
+        delete window.formatirEvents;
+      }
     };
   }, []);
 
+  // Clears the panel only; `window.formatirEvents` keeps the full session.
   const clearEvents = useCallback(() => setEvents([]), []);
 
   return { formatir, events, snapshot, clearEvents };
