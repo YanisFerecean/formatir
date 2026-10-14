@@ -79,6 +79,26 @@
         "default": "./dist/svelte.cjs"
       }
     },
+    "./react-hook-form": {
+      "import": {
+        "types": "./dist/react-hook-form.d.mts",
+        "default": "./dist/react-hook-form.mjs"
+      },
+      "require": {
+        "types": "./dist/react-hook-form.d.ts",
+        "default": "./dist/react-hook-form.cjs"
+      }
+    },
+    "./zod": {
+      "import": {
+        "types": "./dist/zod.d.mts",
+        "default": "./dist/zod.mjs"
+      },
+      "require": {
+        "types": "./dist/zod.d.ts",
+        "default": "./dist/zod.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "files": [

@@ -17,6 +17,8 @@ export default defineConfig([
       react: 'src/react/index.ts',
       vue: 'src/vue/index.ts',
       svelte: 'src/svelte/index.ts',
+      'react-hook-form': 'src/react-hook-form/index.ts',
+      zod: 'src/zod/index.ts',
     },
     format: ['esm', 'cjs'],
     // Bindings share the core's module instance instead of bundling a copy.
