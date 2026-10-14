@@ -14,6 +14,32 @@ describe('transport', () => {
     expect(beacon.mock.calls[0]![0]).toBe('/collect');
   });
 
+  it('falls back to keepalive fetch when the beacon is rejected', () => {
+    const beacon = vi.fn((_url: string, _data?: BodyInit) => false);
+    Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true });
+    const fetchMock = vi.fn((_url: string, _init: RequestInit) => Promise.resolve(new Response(null)));
+    vi.stubGlobal('fetch', fetchMock);
+    const { formatir } = start({ endpoint: '/collect', transport: 'beacon' });
+    formatir.flush();
+    expect(beacon).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('/collect');
+    expect(init).toMatchObject({ method: 'POST', keepalive: true });
+    // Same payload the beacon was offered.
+    expect(JSON.parse(init.body as string).sessionId).toBe(formatir.sessionId);
+  });
+
+  it('never calls sendBeacon with transport: fetch', () => {
+    const beacon = vi.fn((_url: string, _data?: BodyInit) => true);
+    Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true });
+    const fetchMock = vi.fn((_url: string, _init: RequestInit) => Promise.resolve(new Response(null)));
+    vi.stubGlobal('fetch', fetchMock);
+    start({ endpoint: '/collect', transport: 'fetch' }).formatir.flush();
+    expect(beacon).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
   it('flushes when batchSize is reached', () => {
     const fetchMock = vi.fn((_url: string, _init: RequestInit) => Promise.resolve(new Response(null)));
     vi.stubGlobal('fetch', fetchMock);
