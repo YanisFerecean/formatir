@@ -11,8 +11,14 @@ const shared = {
 export default defineConfig([
   {
     ...shared,
-    entry: { index: 'src/index.ts', extras: 'src/extras/index.ts' },
+    entry: {
+      index: 'src/index.ts',
+      extras: 'src/extras/index.ts',
+      react: 'src/react/index.ts',
+    },
     format: ['esm', 'cjs'],
+    // Bindings share the core's module instance instead of bundling a copy.
+    external: ['formatir'],
     dts: true,
     clean: true,
     sourcemap: true,

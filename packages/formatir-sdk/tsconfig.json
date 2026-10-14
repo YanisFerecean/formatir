@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node"],
+    // Bindings import the core by its package name.
+    "paths": { "formatir": ["./src/index.ts"] }
   },
   "include": ["src", "test", "tsup.config.ts", "vitest.config.mts", "scripts"]
 }
