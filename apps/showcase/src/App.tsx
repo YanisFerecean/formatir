@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Metrics } from './components/Metrics';
 import { TelemetryPanel } from './components/TelemetryPanel';
+import { TestScenarios } from './components/TestScenarios';
 import { SectionHeading } from './components/ui';
 import { useFormatir } from './lib/useFormatir';
 
@@ -34,6 +35,7 @@ export default function App() {
         </div>
       </main>
 
+      <TestScenarios />
       <Metrics />
       <Docs />
       <Footer />

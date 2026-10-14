@@ -2,6 +2,7 @@ import { Logo } from './ui';
 
 const LINKS = [
   { href: '#demo', label: 'Live demo' },
+  { href: '#test-scenarios', label: 'Test scenarios' },
   { href: '#metrics', label: 'Metrics' },
   { href: '#docs', label: 'Docs' },
 ];
