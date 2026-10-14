@@ -131,6 +131,20 @@ const formatir = Formatir.init({
 });`}
           />
           <CodeBlock
+            caption="Extras plugins"
+            code={`import { autofill, funnel, paste, revisits, thrash } from 'formatir/extras';
+
+const formatir = Formatir.init({
+  endpoint: '/api/formatir',
+  // Call each plugin - paste(), not paste.
+  plugins: [paste(), autofill(), revisits(), funnel(), thrash({ reversals: 8 })],
+});
+
+// funnel() only fires on step changes - report them:
+formatir.setStep('personal');
+formatir.setStep('experience'); // step_change { from, to, durationMs, back }`}
+          />
+          <CodeBlock
             caption="Consent (GDPR)"
             code={`const formatir = Formatir.init({
   endpoint: '/api/formatir',

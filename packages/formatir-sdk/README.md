@@ -106,6 +106,72 @@ Formatir.init({ plugins: [paste(), autofill(), revisits(), funnel(), thrash()] }
 
 The clipboard is never read: `paste` only reports how much the value length changed.
 
+#### Adding the plugins
+
+Each export is a factory: call it (`paste()`, not `paste`) and pass the result
+in `plugins`. Pick any subset - unused plugins are dropped from your bundle.
+Plugins attach and detach together with the instance (`start()`, `stop()`,
+`destroy()`), and their events behave like the core ones: they are typed in
+`on()`, count towards the score and go out in the same batches.
+
+The same `plugins` option works everywhere options are accepted:
+
+```tsx
+// React
+<FormatirProvider endpoint="/api/formatir" plugins={[paste(), funnel()]}>
+
+// Vue
+app.use(FormatirPlugin, { endpoint: '/api/formatir', plugins: [paste(), funnel()] });
+
+// Svelte
+<form use:formatir={{ endpoint: '/api/formatir', plugins: [paste(), funnel()] }}>
+```
+
+```html
+<!-- Without a bundler: the second script exposes window.FormatirExtras -->
+<script src="https://unpkg.com/formatir/dist/index.global.js"></script>
+<script src="https://unpkg.com/formatir/dist/extras.global.js"></script>
+<script>
+  Formatir.init({ plugins: [FormatirExtras.paste(), FormatirExtras.thrash()] });
+</script>
+```
+
+#### `funnel()` needs `setStep()`
+
+`funnel()` only reacts to step changes, so it emits nothing until your app
+reports them. Call `setStep()` whenever the user moves between steps of a
+multi-step form:
+
+```ts
+const formatir = Formatir.init({ plugins: [funnel()] });
+
+formatir.setStep('personal');     // first step
+// ... user clicks "Next"
+formatir.setStep('experience');   // -> step_change { from: 'personal', to: 'experience', durationMs, back: false }
+// ... user clicks "Back"
+formatir.setStep('personal');     // -> step_change { ..., back: true } and a step_back score signal
+```
+
+Calling `setStep()` with the current step again does nothing.
+
+#### `thrash()` options
+
+`thrash()` works without options; tune it when your UI legitimately involves a
+lot of pointer movement (drag and drop, sliders):
+
+```ts
+thrash({
+  reversals: 8,     // direction changes needed inside the window (default 6)
+  windowMs: 1500,   // window in ms (default 1000)
+  minMovePx: 6,     // shorter moves are jitter and ignored (default 4)
+});
+```
+
+After a `thrash` event the detector stays quiet for 2 s, so one frantic burst
+is reported once.
+
+`paste()`, `autofill()` and `revisits()` take no options.
+
 ### Frustration score
 
 Every weighted signal feeds a saturating score, `100 * (1 - e^(-raw/saturation))`,
