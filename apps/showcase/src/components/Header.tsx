@@ -1,3 +1,4 @@
+import { VERSION } from 'formatir';
 import { Logo } from './ui';
 
 const LINKS = [
@@ -14,7 +15,7 @@ export function Header() {
         <a href="#top" className="flex items-center gap-2.5">
           <Logo />
           <span className="text-lg font-bold tracking-tight text-slate-50">Formatir</span>
-          <span className="chip hidden sm:inline-flex">v0.1.0</span>
+          <span className="chip hidden sm:inline-flex">v{VERSION}</span>
         </a>
 
         <nav className="hidden items-center gap-1 md:flex">

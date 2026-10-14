@@ -1,6 +1,6 @@
 {
   "name": "formatir",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Privacy-first behaviour analytics for web forms: rage clicks, dead clicks, hesitation, field effort, drop-off and client errors in ~5 KB, with React, Vue and Svelte bindings and a collector.",
   "keywords": [
     "analytics",
