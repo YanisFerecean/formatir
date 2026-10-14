@@ -42,6 +42,7 @@ export type {
   MetricListener,
   MetricName,
   MetricPayloads,
+  ScoreOptions,
   Thresholds,
 } from './types';
 

@@ -1,8 +1,8 @@
-import type { FrustrationLevel, MetricName } from '../types';
+import type { FrustrationLevel, ScoreOptions } from '../types';
 import { clamp } from './util';
 
 /** Signal weights; tuned so a single rage click is noticeable, not fatal. */
-const WEIGHTS: Partial<Record<MetricName | 'correction' | 'refill', number>> = {
+export const WEIGHTS: Record<string, number> = {
   rage_click: 18,
   dead_click: 10,
   hesitation: 6,
@@ -22,23 +22,26 @@ export interface Scorer {
 
 /**
  * Saturating frustration score: raw weighted signals are mapped through
- * `1 - e^(-raw/55)` so the value approaches, but never exceeds, 100.
+ * `1 - e^(-raw/saturation)` so the value approaches, but never exceeds, 100.
  */
-export function createScorer(): Scorer {
+export function createScorer(options: ScoreOptions = {}): Scorer {
+  const weights: Record<string, number> = { ...WEIGHTS, ...options.weights };
+  const saturation = options.saturation || 55;
+  const [mild, elevated, severe] = options.levels || [20, 40, 65];
   const counts: Record<string, number> = {};
   let raw = 0;
 
-  const score = () => Math.round(100 * (1 - Math.exp(-raw / 55)));
+  const score = () => Math.round(100 * (1 - Math.exp(-raw / saturation)));
 
   return {
     add(signal, amount = 1) {
       counts[signal] = (counts[signal] || 0) + amount;
-      raw += (WEIGHTS[signal as MetricName] ?? 0) * amount;
+      raw += (weights[signal] || 0) * amount;
     },
     score,
     level() {
       const s = clamp(score(), 0, 100);
-      return s >= 65 ? 'severe' : s >= 40 ? 'elevated' : s >= 20 ? 'mild' : 'calm';
+      return s >= severe ? 'severe' : s >= elevated ? 'elevated' : s >= mild ? 'mild' : 'calm';
     },
     signals: () => ({ ...counts }),
   };

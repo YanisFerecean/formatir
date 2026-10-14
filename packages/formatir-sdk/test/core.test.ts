@@ -69,3 +69,26 @@ describe('instance', () => {
     expect(of('rage_click')).toHaveLength(0);
   });
 });
+
+describe('score options', () => {
+  it('merges custom weights', () => {
+    const s = createScorer({ weights: { rage_click: 0, custom: 55 } });
+    s.add('rage_click');
+    expect(s.score()).toBe(0);
+    s.add('custom');
+    expect(s.score()).toBe(63);
+  });
+
+  it('supports saturation and level bounds', () => {
+    const s = createScorer({ saturation: 18, levels: [10, 50, 90] });
+    s.add('rage_click');
+    expect(s.score()).toBe(63);
+    expect(s.level()).toBe('elevated');
+  });
+
+  it('is wired through init()', () => {
+    const { of, formatir } = start({ score: { weights: { custom: 100 } } });
+    formatir.track('x');
+    expect(of('score').pop()?.data.score).toBeGreaterThan(80);
+  });
+});

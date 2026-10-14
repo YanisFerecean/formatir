@@ -118,7 +118,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
   const sampled = Math.random() < opts.sampleRate;
   const enabled = sampled && typeof document !== 'undefined';
   const transport = createTransport(opts, sessionId, VERSION);
-  const scorer = createScorer();
+  const scorer = createScorer(opts.score);
 
   const teardown: (() => void)[] = [];
   const timers: ReturnType<typeof setTimeout>[] = [];

@@ -156,6 +156,21 @@ export interface Thresholds {
   hesitationMs: number;
 }
 
+/** Tuning for the frustration score. */
+export interface ScoreOptions {
+  /**
+   * Weight per signal, merged over the defaults: `rage_click` 18,
+   * `dead_click` 10, `hesitation` 6, `validation_error` 9, `js_error` 14,
+   * `form_dropoff` 20, `refill` 8, `correction` 0.4. Any metric name (or a
+   * `custom` event) can be weighted; `0` removes a signal from the score.
+   */
+  weights?: Partial<Record<MetricName | 'correction' | 'refill' | (string & {}), number>>;
+  /** Raw weight at which the score reaches ~63. Higher is more forgiving. Default 55. */
+  saturation?: number;
+  /** Lower bounds of `mild`, `elevated` and `severe`. Default `[20, 40, 65]`. */
+  levels?: [mild: number, elevated: number, severe: number];
+}
+
 export interface FormatirOptions {
   /** Collector URL. Without it Formatir stays local (observers only). */
   endpoint?: string;
@@ -188,6 +203,8 @@ export interface FormatirOptions {
   debug?: boolean;
   /** Overrides for the detector thresholds. */
   thresholds?: Partial<Thresholds>;
+  /** Frustration score weights, saturation and level bounds. */
+  score?: ScoreOptions;
   /** Convenience hook, called for every event before listeners. */
   onEvent?: MetricListener;
   /**
