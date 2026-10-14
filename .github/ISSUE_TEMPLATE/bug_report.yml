@@ -1,0 +1,49 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Security problems belong in a [private report](https://github.com/YanisFerecean/formatir/security/advisories/new), not here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal code or steps. A link to a CodeSandbox / StackBlitz is ideal.
+      render: ts
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: formatir version
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: entry
+    attributes:
+      label: Entry point
+      multiple: true
+      options:
+        - formatir
+        - formatir/extras
+        - formatir/react
+        - formatir/vue
+        - formatir/svelte
+        - formatir/react-hook-form
+        - formatir/zod
+        - formatir/server
+  - type: input
+    id: env
+    attributes:
+      label: Browser / runtime
+      placeholder: Chrome 140, Safari 19, Node 22, Cloudflare Workers, ...

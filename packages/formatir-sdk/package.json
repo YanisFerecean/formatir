@@ -1,7 +1,7 @@
 {
   "name": "formatir",
   "version": "0.1.0",
-  "description": "Privacy-first behaviour analytics for web forms: rage clicks, dead clicks, hesitation, field effort, drop-off and client errors in ~5 KB.",
+  "description": "Privacy-first behaviour analytics for web forms: rage clicks, dead clicks, hesitation, field effort, drop-off and client errors in ~5 KB, with React, Vue and Svelte bindings and a collector.",
   "keywords": [
     "analytics",
     "forms",
@@ -10,7 +10,14 @@
     "dead-click",
     "telemetry",
     "form-analytics",
-    "privacy"
+    "privacy",
+    "react",
+    "vue",
+    "svelte",
+    "zod",
+    "react-hook-form",
+    "gdpr",
+    "consent"
   ],
   "homepage": "https://yanisferecean.github.io/formatir/",
   "repository": {
@@ -22,6 +29,7 @@
     "url": "https://github.com/YanisFerecean/formatir/issues"
   },
   "license": "MIT",
+  "author": "YanisFErecean (https://github.com/YanisFerecean)",
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

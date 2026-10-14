@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a new metric, option or integration
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to find out or do that Formatir does not support yet?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: How could it work? For new metrics, sketch the trigger and the payload.
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Principles
+      options:
+        - label: The feature does not need to read what users type.
+          required: true
