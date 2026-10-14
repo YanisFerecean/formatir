@@ -5,5 +5,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src", "tsup.config.ts", "scripts"]
+  "include": ["src", "test", "tsup.config.ts", "vitest.config.mts", "scripts"]
 }

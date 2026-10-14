@@ -1,0 +1,71 @@
+import { describe, expect, it, vi } from 'vitest';
+import { createScorer } from '../src/core/score';
+import { init } from '../src';
+import { $, click, start, useDom } from './helpers';
+
+useDom();
+
+describe('score', () => {
+  it('saturates below 100', () => {
+    const s = createScorer();
+    for (let i = 0; i < 100; i++) s.add('rage_click');
+    expect(s.score()).toBeLessThanOrEqual(100);
+    expect(s.level()).toBe('severe');
+  });
+
+  it('maps levels', () => {
+    const s = createScorer();
+    expect(s.level()).toBe('calm');
+    s.add('rage_click');
+    expect(s.score()).toBe(Math.round(100 * (1 - Math.exp(-18 / 55))));
+    expect(s.level()).toBe('mild');
+  });
+
+  it('emits score events when the value changes', () => {
+    const { of } = start();
+    for (let i = 0; i < 3; i++) click($('#static'));
+    expect(of('score').pop()?.data.signals.rage_click).toBe(1);
+  });
+});
+
+describe('instance', () => {
+  it('starts a session', () => {
+    const { formatir } = start();
+    expect(formatir.enabled).toBe(true);
+    expect(formatir.sessionId).toMatch(/^fmt_/);
+  });
+
+  it('honours sampleRate', () => {
+    const { formatir, events } = start({ sampleRate: 0 });
+    expect(formatir.enabled).toBe(false);
+    expect(events).toHaveLength(0);
+  });
+
+  it('re-init destroys the previous instance', () => {
+    const a = start();
+    init({ transport: 'none' });
+    click($('#static'));
+    vi.advanceTimersByTime(1000);
+    expect(a.of('dead_click')).toHaveLength(0);
+  });
+
+  it('track() emits custom events', () => {
+    const { of, formatir } = start();
+    formatir.track('cv_uploaded', { sizeKb: 812 });
+    expect(of('custom')[0]?.data).toEqual({ name: 'cv_uploaded', sizeKb: 812 });
+  });
+
+  it('setStep() tags events', () => {
+    const { of, formatir } = start();
+    formatir.setStep('experience');
+    formatir.track('x');
+    expect(of('custom')[0]?.step).toBe('experience');
+  });
+
+  it('ignores opted-out subtrees', () => {
+    document.body.insertAdjacentHTML('beforeend', '<div data-formatir-ignore><p id="p">x</p></div>');
+    const { of } = start();
+    for (let i = 0; i < 3; i++) click($('#p'));
+    expect(of('rage_click')).toHaveLength(0);
+  });
+});

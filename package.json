@@ -13,6 +13,7 @@
     "dev": "pnpm --filter showcase dev",
     "preview": "pnpm --filter showcase preview",
     "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
     "size": "pnpm --filter formatir size",
     "clean": "pnpm -r exec rm -rf dist"
   },
