@@ -44,18 +44,18 @@ export function ScoreGauge({
         <div className="absolute inset-0 grid place-items-center">
           <div className="text-center">
             <div className="text-2xl font-extrabold text-slate-50">{score}</div>
-            <div className="text-[10px] uppercase tracking-wider text-slate-500">von 100</div>
+            <div className="text-[10px] uppercase tracking-wider text-slate-500">of 100</div>
           </div>
         </div>
       </div>
 
       <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Frustrations-Score</p>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Frustration score</p>
         <p className="mt-1 text-lg font-bold" style={{ color: meta.color }}>
           {meta.label}
         </p>
         <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
-          {events} Events erfasst · gewichtete Signale, gesättigt bei 100.
+          {events} events captured · weighted signals, saturating at 100.
         </p>
       </div>
     </div>

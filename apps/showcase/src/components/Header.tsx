@@ -1,9 +1,9 @@
 import { Logo } from './ui';
 
 const LINKS = [
-  { href: '#demo', label: 'Live-Demo' },
-  { href: '#metriken', label: 'Metriken' },
-  { href: '#docs', label: 'Dokumentation' },
+  { href: '#demo', label: 'Live demo' },
+  { href: '#metrics', label: 'Metrics' },
+  { href: '#docs', label: 'Docs' },
 ];
 
 export function Header() {
@@ -29,7 +29,7 @@ export function Header() {
         </nav>
 
         <a href="#demo" className="btn btn-primary">
-          Demo starten
+          Try the demo
         </a>
       </div>
     </header>

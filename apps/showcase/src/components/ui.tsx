@@ -38,7 +38,7 @@ export function CodeBlock({
           {caption ?? 'terminal'}
         </span>
         <button type="button" onClick={copy} className="btn btn-ghost btn-mini">
-          {copied ? 'Kopiert' : 'Kopieren'}
+          {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
       <pre className="scroll-thin overflow-x-auto px-4 py-3 text-[12.5px] leading-relaxed text-slate-200">

@@ -14,7 +14,7 @@ export function App() {
 
 function ApplicationForm() {
   useFormatirEvent('form_dropoff', (event) => {
-    console.warn('Abbruch bei', event.data.lastField?.key);
+    console.warn('Abandoned at', event.data.lastField?.key);
   });
 
   return <form id="application-form">{/* … */}</form>;
@@ -26,7 +26,7 @@ createApp(App)
   .use(FormatirPlugin, { endpoint: '/api/formatir' })
   .mount('#app');
 
-// Komponente (<script setup>)
+// Component (<script setup>)
 import { useFormatirEvent } from 'formatir/vue';
 
 useFormatirEvent('hesitation', (e) => track(e.field?.key, e.data.ms));`,
@@ -35,7 +35,7 @@ useFormatirEvent('hesitation', (e) => track(e.field?.key, e.data.ms));`,
   let tracker;
 </script>
 
-<!-- Das Element wird zum beobachteten root -->
+<!-- The element becomes the observed root -->
 <form use:formatir={{
   endpoint: '/api/formatir',
   onInstance: (f) => (tracker = f),
@@ -57,12 +57,12 @@ useFormatirEvent('hesitation', (e) => track(e.field?.key, e.data.ms));`,
     console.warn('rage click', event.data.selector);
   });
 </script>`,
-  Validierung: `// React Hook Form: nur der Fehlertyp, nie die Meldung
+  Validation: `// React Hook Form: only the error type, never the message
 import { formatirOnInvalid } from 'formatir/react-hook-form';
 
 <form onSubmit={handleSubmit(onValid, formatirOnInvalid(formatir))}>
 
-// Zod: Issue-Codes pro Pfad (address.zip → too_small)
+// Zod: issue codes per path (address.zip → too_small)
 import { withFormatir } from 'formatir/zod';
 
 const result = withFormatir(formatir, ApplicationSchema)
@@ -78,30 +78,31 @@ const handler = createHandler({
 export default { fetch: handler };            // Workers / Bun
 app.post('/api/formatir', toNodeListener(handler)); // Express
 
-// 204 gespeichert · 400 ungültig · 500 → SDK versucht es später erneut`,
+// 204 stored · 400 invalid · 500 → the SDK retries later`,
 } as const;
 
 type TabName = keyof typeof TABS;
 
 const OPTIONS: [string, string, string][] = [
-  ['endpoint', '–', 'Collector-URL. Ohne sie bleibt alles im Browser.'],
-  ['appId', '–', 'Wird mit jedem Batch mitgesendet.'],
-  ['root', 'document', 'Selektor oder Element, das beobachtet wird.'],
-  ['sessionId', 'generiert', 'Bestehende Session-ID weiterverwenden.'],
-  ['autoStart', 'true', 'false wartet auf start() / optIn() - z. B. nach Consent.'],
-  ['batchSize', '20', 'Events pro Batch bis zum automatischen Flush.'],
-  ['flushIntervalMs', '5000', 'Periodischer Flush; 0 deaktiviert ihn.'],
-  ['sampleRate', '1', 'Anteil der aufgezeichneten Sessions.'],
+  ['endpoint', '–', 'Collector URL. Without it everything stays in the browser.'],
+  ['appId', '–', 'Sent with every batch.'],
+  ['root', 'document', 'Selector or element to observe; a selector follows re-renders.'],
+  ['sessionId', 'generated', 'Reuse an existing session id.'],
+  ['autoStart', 'true', 'false waits for start() / optIn() - e.g. after consent.'],
+  ['batchSize', '20', 'Events per batch before an automatic flush.'],
+  ['flushIntervalMs', '5000', 'Periodic flush; 0 disables it.'],
+  ['sampleRate', '1', 'Share of sessions that are recorded.'],
   ['transport', "'beacon'", "'beacon' | 'fetch' | 'none'."],
-  ['offline', 'true', 'Nicht zugestellte Batches speichern und später erneut senden.'],
-  ['ignoreSelector', '[data-formatir-ignore]', 'Opt-out für ganze Teilbäume.'],
-  ['thresholds', 'siehe Detektoren', 'Schwellenwerte pro Detektor.'],
-  ['score', 'siehe Doku', 'Gewichte, Sättigung und Stufen des Frustrations-Scores.'],
-  ['plugins', '[]', 'Zusätzliche Detektoren, z. B. aus formatir/extras.'],
-  ['redactErrors', 'true', 'E-Mails und Ziffernfolgen aus js_error entfernen.'],
-  ['beforeSend', '–', 'Event umschreiben oder mit null verwerfen, bevor es gesendet wird.'],
-  ['onEvent', '–', 'Callback für jedes Event.'],
-  ['debug', 'false', 'Jedes Event in der Konsole ausgeben.'],
+  ['offline', 'true', 'Keep undelivered batches and resend them later.'],
+  ['ignoreSelector', '[data-formatir-ignore]', 'Opt-out for whole subtrees.'],
+  ['thresholds', 'see detectors', 'Thresholds per detector.'],
+  ['score', 'see docs', 'Weights, saturation and levels of the frustration score.'],
+  ['plugins', '[]', 'Extra detectors, e.g. from formatir/extras.'],
+  ['errorScope', "'page'", "'root' reports only errors while the user works in the root."],
+  ['redactErrors', 'true', 'Remove emails and digit sequences from js_error.'],
+  ['beforeSend', '–', 'Rewrite an event, or drop it with null, before it is sent.'],
+  ['onEvent', '–', 'Callback for every event.'],
+  ['debug', 'false', 'Log every event to the console.'],
 ];
 
 export function Docs() {
@@ -110,16 +111,16 @@ export function Docs() {
   return (
     <section id="docs" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <SectionHeading
-        eyebrow="Dokumentation"
-        title="In drei Zeilen eingebunden"
-        description="Formatir ist abhängigkeitsfrei, tree-shakebar und liefert ESM, CJS sowie einen klassischen <script>-Build - dazu Bindings für React, Vue und Svelte, Validierungs-Adapter und einen Collector."
+        eyebrow="Documentation"
+        title="Integrated in three lines"
+        description="Formatir is dependency-free and tree-shakeable, and ships ESM, CJS and a classic <script> build - plus bindings for React, Vue and Svelte, validation adapters and a collector."
       />
 
       <div className="mt-10 grid gap-5 lg:grid-cols-2">
         <div className="space-y-5">
           <CodeBlock caption="Installation" code={'pnpm add formatir\n# npm i formatir · yarn add formatir'} />
           <CodeBlock
-            caption="Initialisierung"
+            caption="Initialisation"
             code={`import { Formatir } from 'formatir';
 
 const formatir = Formatir.init({
@@ -130,31 +131,31 @@ const formatir = Formatir.init({
 });`}
           />
           <CodeBlock
-            caption="Consent (DSGVO)"
+            caption="Consent (GDPR)"
             code={`const formatir = Formatir.init({
   endpoint: '/api/formatir',
-  autoStart: false,          // erst nach Zustimmung messen
+  autoStart: false,          // measure only after consent
 });
 
-banner.onAccept(() => formatir.optIn());  // starten
-banner.onReject(() => formatir.optOut()); // stoppen, Queue leeren, merken`}
+banner.onAccept(() => formatir.optIn());  // start
+banner.onReject(() => formatir.optOut()); // stop, clear the queue, remember`}
           />
           <CodeBlock
-            caption="Events beobachten"
+            caption="Listening to events"
             code={`formatir.on('rage_click', (e) => report(e.data.selector));
 formatir.on('field_effort', (e) => {
   if (e.data.refills > 1) flagField(e.field?.key);
 });
 
-// Alles auf einmal:
+// Everything at once:
 formatir.on('*', (event) => stream.push(event));
 
-// Für SPAs und eigene Validierung:
+// For SPAs and custom validation:
 formatir.setStep('experience');
 formatir.reportValidationError('salary', 'belowMarketRate');
 formatir.reportDropoff();
 
-// Mehrere Formulare auf einer Seite:
+// Several forms on one page:
 const newsletter = Formatir.create({ root: '#newsletter' });`}
           />
         </div>
@@ -179,14 +180,14 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
           </div>
 
           <div className="panel p-5">
-            <h3 className="text-sm font-bold text-slate-50">Optionen</h3>
+            <h3 className="text-sm font-bold text-slate-50">Options</h3>
             <div className="scroll-thin mt-3 max-h-64 overflow-auto">
               <table className="w-full text-left text-xs">
                 <thead className="text-slate-500">
                   <tr>
                     <th className="pb-2 pr-3 font-medium">Option</th>
                     <th className="pb-2 pr-3 font-medium">Default</th>
-                    <th className="pb-2 font-medium">Bedeutung</th>
+                    <th className="pb-2 font-medium">Meaning</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -210,39 +211,39 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
             🔒
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-slate-50">Privacy by Design</h3>
+            <h3 className="text-sm font-bold text-slate-50">Privacy by design</h3>
             <ul className="mt-3 grid gap-2 text-sm text-slate-400 sm:grid-cols-2">
-              <li>Keine Werte, keine Texte, kein Clipboard - nur Längen, Zähler und Zeitdeltas.</li>
+              <li>No values, no text, no clipboard - only lengths, counters and time deltas.</li>
               <li>
-                Felder werden über <code className="font-mono text-brand-300">name</code>,{' '}
-                <code className="font-mono text-brand-300">id</code> oder{' '}
-                <code className="font-mono text-brand-300">data-formatir-field</code> identifiziert.
+                Fields are identified by <code className="font-mono text-brand-300">name</code>,{' '}
+                <code className="font-mono text-brand-300">id</code> or{' '}
+                <code className="font-mono text-brand-300">data-formatir-field</code>.
               </li>
               <li>
-                Klickziele als strukturelle Selektoren (Tag / ID / Klasse / Position) - nie als Text.
+                Click targets as structural selectors (tag / id / class / position) - never as text.
               </li>
               <li>
-                <code className="font-mono text-brand-300">data-formatir-ignore</code> nimmt ganze
-                Teilbäume aus der Messung heraus.
+                <code className="font-mono text-brand-300">data-formatir-ignore</code> removes whole
+                subtrees from measurement.
               </li>
               <li>
-                Browser-Validierungstexte werden bewusst ignoriert - sie können die Eingabe
-                enthalten. Erfasst wird nur der <code className="font-mono">ValidityState</code>.
+                Browser validation messages are ignored on purpose - they can contain the input.
+                Only the <code className="font-mono">ValidityState</code> is recorded.
               </li>
               <li>
-                Fehlermeldungen in <code className="font-mono text-brand-300">js_error</code> werden
-                von E-Mail-Adressen und Ziffernfolgen (Telefon, IBAN) bereinigt.
+                Error messages in <code className="font-mono text-brand-300">js_error</code> are
+                scrubbed of email addresses and digit sequences (phone, IBAN).
               </li>
               <li>
-                <code className="font-mono text-brand-300">beforeSend</code> kann jedes Event vor dem
-                Versand umschreiben oder verwerfen.
+                <code className="font-mono text-brand-300">beforeSend</code> can rewrite or drop any
+                event before it is sent.
               </li>
               <li>
-                Consent eingebaut: <code className="font-mono text-brand-300">autoStart: false</code>,{' '}
-                <code className="font-mono text-brand-300">optIn()</code> und{' '}
-                <code className="font-mono text-brand-300">optOut()</code> (wird gespeichert).
+                Consent built in: <code className="font-mono text-brand-300">autoStart: false</code>,{' '}
+                <code className="font-mono text-brand-300">optIn()</code> and{' '}
+                <code className="font-mono text-brand-300">optOut()</code> (remembered).
               </li>
-              <li>Sampling über <code className="font-mono text-brand-300">sampleRate</code>.</li>
+              <li>Sampling via <code className="font-mono text-brand-300">sampleRate</code>.</li>
             </ul>
           </div>
         </div>

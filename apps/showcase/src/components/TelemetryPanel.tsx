@@ -6,12 +6,12 @@ import { ScoreGauge } from './ScoreGauge';
 const SIGNAL_TILES: { key: string; label: string }[] = [
   { key: 'rage_click', label: 'Rage Clicks' },
   { key: 'dead_click', label: 'Dead Clicks' },
-  { key: 'hesitation', label: 'Zögern' },
-  { key: 'validation_error', label: 'Validierung' },
+  { key: 'hesitation', label: 'Hesitation' },
+  { key: 'validation_error', label: 'Validation' },
   { key: 'refill', label: 'Refills' },
-  { key: 'correction', label: 'Korrekturen' },
-  { key: 'js_error', label: 'JS-Fehler' },
-  { key: 'form_dropoff', label: 'Abbrüche' },
+  { key: 'correction', label: 'Corrections' },
+  { key: 'js_error', label: 'JS errors' },
+  { key: 'form_dropoff', label: 'Drop-offs' },
 ];
 
 interface Warning {
@@ -28,8 +28,8 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
   if (snapshot.level === 'severe' || snapshot.level === 'elevated') {
     out.push({
       id: 'score',
-      title: 'Frustration steigt',
-      detail: `Score ${snapshot.score}/100 - diese Session droht abzubrechen.`,
+      title: 'Frustration is rising',
+      detail: `Score ${snapshot.score}/100 - this session is at risk of being abandoned.`,
       tone: 'border-severe/40 bg-severe/10',
     });
   }
@@ -37,23 +37,23 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
     out.push({
       id: 'rage',
       title: `${s.rage_click}× Rage Click`,
-      detail: 'Wiederholte schnelle Klicks deuten auf ein nicht reagierendes Element hin.',
+      detail: 'Repeated fast clicks point to an element that does not respond.',
       tone: 'border-rose-400/40 bg-rose-500/10',
     });
   }
   if (s.js_error) {
     out.push({
       id: 'err',
-      title: `${s.js_error} JavaScript-Fehler`,
-      detail: 'Fehler während der Formular-Session - hohe Abbruchwahrscheinlichkeit.',
+      title: `${s.js_error} JavaScript error${s.js_error === 1 ? '' : 's'}`,
+      detail: 'Errors during the form session - a high risk of abandonment.',
       tone: 'border-red-400/40 bg-red-500/10',
     });
   }
   if (s.dead_click) {
     out.push({
       id: 'dead',
-      title: `${s.dead_click}× Klick ohne Wirkung`,
-      detail: 'Nutzer halten ein statisches Element für interaktiv.',
+      title: `${s.dead_click}× click without effect`,
+      detail: 'Users take a static element for an interactive one.',
       tone: 'border-orange-400/40 bg-orange-500/10',
     });
   }
@@ -63,31 +63,31 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
       out.push({
         id: `refill-${field.key}`,
         title: `${fieldLabel(field.key)}: ${field.refills} Refills`,
-        detail: 'Das Feld wurde mehrfach geleert und neu befüllt - Formulierung prüfen.',
+        detail: 'The field was cleared and refilled several times - review its wording.',
         tone: 'border-amber-400/40 bg-amber-500/10',
       });
     }
     if (field.validationErrors >= 2) {
       out.push({
         id: `val-${field.key}`,
-        title: `${fieldLabel(field.key)}: ${field.validationErrors} Fehlversuche`,
-        detail: 'Die Validierungsregel ist offenbar schwer zu treffen.',
+        title: `${fieldLabel(field.key)}: ${field.validationErrors} failed attempts`,
+        detail: 'The validation rule is apparently hard to meet.',
         tone: 'border-red-400/40 bg-red-500/10',
       });
     }
     if (field.hesitationMs >= 3000) {
       out.push({
         id: `hes-${field.key}`,
-        title: `${fieldLabel(field.key)}: ${ms(field.hesitationMs)} Zögern`,
-        detail: 'Lange Denkpause vor der ersten Eingabe - Hilfetext könnte fehlen.',
+        title: `${fieldLabel(field.key)}: ${ms(field.hesitationMs)} hesitation`,
+        detail: 'A long pause before the first input - a help text may be missing.',
         tone: 'border-amber-400/40 bg-amber-500/10',
       });
     }
     if (field.corrections >= 12) {
       out.push({
         id: `corr-${field.key}`,
-        title: `${fieldLabel(field.key)}: ${field.corrections} Korrekturen`,
-        detail: 'Viel Nachbessern - Eingabeformat oder Maske überdenken.',
+        title: `${fieldLabel(field.key)}: ${field.corrections} corrections`,
+        detail: 'Lots of fixing - reconsider the input format or mask.',
         tone: 'border-sky-400/40 bg-sky-500/10',
       });
     }
@@ -119,14 +119,14 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
     [snapshot],
   );
 
-  const triggerError = () => {
+  // The panel is outside the form, and the demo uses `errorScope: 'root'`, so
+  // this error is deliberately *not* reported. The form's "Simulate failed
+  // upload" button shows the counterpart.
+  const triggerOutsideError = () => {
+    (document.activeElement as HTMLElement | null)?.blur();
     window.setTimeout(() => {
-      throw new Error('Demo: Lebenslauf-Upload fehlgeschlagen (HTTP 502)');
+      throw new Error('Demo: chat widget crashed');
     }, 0);
-  };
-
-  const triggerRejection = () => {
-    void Promise.reject(new Error('Demo: /api/skills antwortet nicht'));
   };
 
   return (
@@ -138,10 +138,10 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         <div>
           <h2 className="flex items-center gap-2 text-sm font-bold text-slate-50">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping-slow" />
-            Live-Telemetrie
+            Live telemetry
           </h2>
           <p className="mt-0.5 font-mono text-[11px] text-slate-500">
-            {snapshot?.sessionId ?? 'initialisiere …'}
+            {snapshot?.sessionId ?? 'initialising …'}
           </p>
         </div>
         <span className="chip">transport: none</span>
@@ -178,7 +178,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
 
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Hinweise
+            Insights
           </h3>
           <ul className="mt-2 space-y-2">
             {warnings.length ? (
@@ -192,9 +192,8 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
               ))
             ) : (
               <li className="panel-tight px-3 py-3 text-[11px] leading-relaxed text-slate-500">
-                Noch keine Auffälligkeiten. Klicke dreimal schnell auf die Schrittanzeige, lass ein
-                Feld lange leer oder leere ein ausgefülltes Feld wieder - die Detektoren schlagen
-                sofort an.
+                Nothing unusual yet. Click the step indicator three times quickly, leave a field
+                empty for a while or clear a filled-in field - the detectors fire right away.
               </li>
             )}
           </ul>
@@ -202,23 +201,23 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
 
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Feld-Aufwand
+            Field effort
           </h3>
           <div className="scroll-thin mt-2 max-h-52 overflow-y-auto">
             <table className="w-full text-left text-[11px]">
               <thead className="sticky top-0 bg-ink-900/95 text-slate-500">
                 <tr>
-                  <th className="py-1.5 pr-2 font-medium">Feld</th>
-                  <th className="py-1.5 px-1 text-right font-medium" title="Anschläge">
+                  <th className="py-1.5 pr-2 font-medium">Field</th>
+                  <th className="py-1.5 px-1 text-right font-medium" title="Keystrokes">
                     ⌨
                   </th>
-                  <th className="py-1.5 px-1 text-right font-medium" title="Korrekturen">
+                  <th className="py-1.5 px-1 text-right font-medium" title="Corrections">
                     ⌫
                   </th>
                   <th className="py-1.5 px-1 text-right font-medium" title="Refills">
                     ↻
                   </th>
-                  <th className="py-1.5 pl-1 text-right font-medium" title="Zögern">
+                  <th className="py-1.5 pl-1 text-right font-medium" title="Hesitation">
                     ⏱
                   </th>
                 </tr>
@@ -249,7 +248,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                 ) : (
                   <tr>
                     <td colSpan={5} className="py-3 text-slate-500">
-                      Noch kein Feld berührt.
+                      No field touched yet.
                     </td>
                   </tr>
                 )}
@@ -261,7 +260,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         <div>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Event-Stream
+              Event stream
             </h3>
             <div className="flex items-center gap-1.5">
               <button
@@ -269,10 +268,10 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                 onClick={() => setOnlySignals((v) => !v)}
                 className={`btn btn-mini ${onlySignals ? 'btn-primary' : 'btn-ghost'}`}
               >
-                Nur Signale
+                Signals only
               </button>
               <button type="button" onClick={clearEvents} className="btn btn-ghost btn-mini">
-                Leeren
+                Clear
               </button>
             </div>
           </div>
@@ -298,7 +297,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
               })
             ) : (
               <li className="panel-tight px-3 py-3 text-[11px] text-slate-500">
-                Noch keine Events - fang links mit dem Formular an.
+                No events yet - start with the form on the left.
               </li>
             )}
           </ul>
@@ -306,30 +305,32 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
 
         <div>
           <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Demo-Auslöser
+            Demo triggers
           </h3>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <button type="button" onClick={triggerError} className="btn btn-ghost btn-mini">
-              JS-Fehler
-            </button>
-            <button type="button" onClick={triggerRejection} className="btn btn-ghost btn-mini">
-              Promise-Rejection
+            <button type="button" onClick={triggerOutsideError} className="btn btn-ghost btn-mini">
+              JS error outside the form
             </button>
             <button
               type="button"
               onClick={() => formatir?.reportDropoff()}
               className="btn btn-ghost btn-mini"
             >
-              Abbruch melden
+              Report drop-off
             </button>
             <button
               type="button"
               onClick={() => formatir?.track('demo_ping', { source: 'panel' })}
               className="btn btn-ghost btn-mini"
             >
-              Custom Event
+              Custom event
             </button>
           </div>
+          <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+            Only errors that happen while someone works in the form are reported (
+            <code className="font-mono">errorScope: 'root'</code>) - the button above is ignored.
+            Try <em>Simulate failed upload</em> in step 2 instead.
+          </p>
         </div>
 
         <details className="panel-tight px-3 py-2">
@@ -337,8 +338,8 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             Beacon-Payload
           </summary>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
-            Genau das würde per <code className="font-mono">navigator.sendBeacon</code> an dein
-            <code className="font-mono"> endpoint</code> gehen - keine Klartext-Eingaben.
+            Exactly this would go to your <code className="font-mono">endpoint</code> via{' '}
+            <code className="font-mono">navigator.sendBeacon</code> - no typed input.
           </p>
           <pre className="scroll-thin mt-2 max-h-56 overflow-auto rounded-lg bg-ink-950/80 p-2.5 font-mono text-[10px] leading-relaxed text-slate-300">
             {beaconPayload(

@@ -7,28 +7,28 @@ type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 type Values = Record<string, string>;
 type Errors = Record<string, string>;
 
-/** German validation copy derived from the native ValidityState. */
+/** Validation copy derived from the native ValidityState. */
 function messageFor(el: FieldElement): string {
   const v = el.validity;
   if (v.valueMissing) {
     return el.type === 'checkbox'
-      ? 'Bitte bestätigen, um fortzufahren.'
-      : 'Dieses Feld ist ein Pflichtfeld.';
+      ? 'Please confirm to continue.'
+      : 'This field is required.';
   }
   if (v.typeMismatch) {
     return el.type === 'email'
-      ? 'Bitte eine gültige E-Mail-Adresse angeben.'
-      : 'Bitte eine vollständige URL angeben (https://…).';
+      ? 'Please enter a valid email address.'
+      : 'Please enter a full URL (https://…).';
   }
-  if (v.patternMismatch) return 'Das Format passt nicht zur Vorgabe.';
+  if (v.patternMismatch) return 'The format does not match.';
   if (v.tooShort) {
     const min = (el as HTMLInputElement).minLength;
-    return `Mindestens ${min} Zeichen - aktuell ${el.value.length}.`;
+    return `At least ${min} characters - currently ${el.value.length}.`;
   }
-  if (v.rangeUnderflow) return 'Der Wert ist zu klein.';
-  if (v.rangeOverflow) return 'Der Wert ist zu groß.';
-  if (v.badInput) return 'Die Eingabe konnte nicht gelesen werden.';
-  return 'Ungültige Eingabe.';
+  if (v.rangeUnderflow) return 'The value is too small.';
+  if (v.rangeOverflow) return 'The value is too large.';
+  if (v.badInput) return 'The input could not be read.';
+  return 'Invalid input.';
 }
 
 /**
@@ -77,7 +77,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
     if (STEPS[index]?.id !== 'experience') return out;
     const salary = Number(values.salary);
     if (values.salary && salary > 0 && salary < 20000) {
-      out.salary = 'Unter 20.000 EUR wirkt unplausibel - bitte prüfen.';
+      out.salary = 'Below EUR 20,000 looks implausible - please check.';
       formatir?.reportValidationError('salary', 'belowMarketRate');
     }
     return out;
@@ -103,6 +103,11 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
 
     formatir?.track('step_completed', { step: step.id, index: stepIndex });
     setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
+  };
+
+  /** An unhandled rejection right after a click in the form - reported as `js_error`. */
+  const simulateUpload = () => {
+    void Promise.reject(new Error('Demo: CV upload failed (HTTP 502)'));
   };
 
   const goBack = () => {
@@ -158,14 +163,14 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
             ✓
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-50">Bewerbung eingegangen</h2>
+            <h2 className="text-xl font-bold text-slate-50">Application received</h2>
             <p className="mt-2 text-sm text-slate-400">
-              Formatir hat die Session als abgeschlossen markiert - es wird also kein Abbruch
-              gemeldet. Bearbeitungsdauer: {(done.durationMs / 1000).toFixed(1)} s,
-              Frustrations-Score beim Absenden: {done.score}/100.
+              Formatir marked the session as completed, so no abandonment is reported. Time
+              taken: {(done.durationMs / 1000).toFixed(1)} s, frustration score at submit:{' '}
+              {done.score}/100.
             </p>
             <button type="button" onClick={reset} className="btn btn-ghost mt-5">
-              Neue Session starten
+              Start a new session
             </button>
           </div>
         </div>
@@ -180,12 +185,12 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-400">
-              Bewerbung · Senior Frontend Engineer
+              Application · Senior Frontend Engineer
             </p>
             <h2 className="mt-1 text-lg font-bold text-slate-50">{step.title}</h2>
           </div>
           <span className="chip">
-            Schritt {stepIndex + 1} / {STEPS.length}
+            Step {stepIndex + 1} / {STEPS.length}
           </span>
         </div>
 
@@ -241,10 +246,13 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
             {s.id === 'experience' ? (
               /* Inert on purpose - clicking it produces a dead click. */
               <div className="sm:col-span-2 rounded-xl border border-dashed border-slate-400/25 bg-slate-400/5 px-4 py-6 text-center">
-                <p className="text-sm font-semibold text-slate-300">Lebenslauf hochladen</p>
+                <p className="text-sm font-semibold text-slate-300">Upload your CV</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  PDF oder DOCX, max. 8 MB - Datei hier ablegen
+                  PDF or DOCX, max. 8 MB - drop the file here
                 </p>
+                <button type="button" onClick={simulateUpload} className="btn btn-ghost btn-mini mt-3">
+                  Simulate failed upload
+                </button>
               </div>
             ) : null}
 
@@ -264,14 +272,14 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-slate-500">Noch nichts ausgefüllt.</p>
+                        <p className="text-sm text-slate-500">Nothing filled in yet.</p>
                       )}
                     </dl>
                   </div>
                 ))}
                 <p className="text-xs text-slate-500">
-                  Diese Zusammenfassung lebt ausschließlich im React-State der Demo. Formatir sieht
-                  davon nur Zeichenlängen, Zähler und Zeitabstände.
+                  This summary lives only in the demo's React state. Formatir sees nothing but
+                  character counts, counters and time deltas.
                 </p>
               </div>
             ) : null}
@@ -285,16 +293,16 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
             disabled={stepIndex === 0}
             className="btn btn-ghost disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Zurück
+            Back
           </button>
 
           {stepIndex < STEPS.length - 1 ? (
             <button type="button" onClick={goNext} className="btn btn-primary">
-              Weiter
+              Next
             </button>
           ) : (
             <button type="submit" className="btn btn-primary">
-              Bewerbung absenden
+              Submit application
             </button>
           )}
         </div>

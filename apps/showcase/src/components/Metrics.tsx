@@ -4,38 +4,38 @@ const METRICS = [
   {
     icon: '🖱️',
     name: 'Rage Click Detector',
-    threshold: '>= 3 Klicks / 500 ms',
-    text: 'Mehrfaches hektisches Klicken auf dasselbe Element oder innerhalb eines 32-px-Radius - das klassische Signal für „reagiert nicht".',
+    threshold: '>= 3 clicks / 500 ms',
+    text: 'Repeated frantic clicking on the same element or within a 32 px radius - the classic "this does not respond" signal.',
   },
   {
     icon: '💀',
     name: 'Dead Click Detector',
-    threshold: '1000 ms ohne Reaktion',
-    text: 'Klick auf ein statisches Element, dem weder DOM-Mutation noch Navigation oder Fokuswechsel folgt. Deckt falsch verstandene Affordanzen auf.',
+    threshold: '1000 ms without reaction',
+    text: 'A click on a static element followed by no DOM mutation, navigation or focus change. Reveals misunderstood affordances.',
   },
   {
     icon: '⏱️',
     name: 'Hesitation Time Detector',
-    threshold: '> 3000 ms bis zum 1. Anschlag',
-    text: 'Zeit zwischen Fokus und erster Eingabe. Wird ein Feld ganz ohne Eingabe verlassen, meldet Formatir es als abgebrochen.',
+    threshold: '> 3000 ms to the first keystroke',
+    text: 'Time between focus and the first input. A field left without any input is reported as abandoned.',
   },
   {
     icon: '✍️',
     name: 'Field Effort & Refill',
-    threshold: 'pro Feld',
-    text: 'Anschläge, Korrekturen (Backspace/Delete), Refills nach Leeren des Feldes und Validierungsfehler - der Aufwand pro Feld auf einen Blick.',
+    threshold: 'per field',
+    text: 'Keystrokes, corrections (Backspace/Delete), refills after clearing the field and validation errors - the effort per field at a glance.',
   },
   {
     icon: '🚪',
     name: 'Form Drop-off Detector',
     threshold: 'pagehide / visibilitychange',
-    text: 'Erkennt das zuletzt berührte Feld vor Abbruch oder Seitenwechsel - inklusive Fortschritt und Sitzungsdauer, per Beacon zuverlässig zugestellt.',
+    text: 'Detects the last field touched before abandoning or leaving the page - including progress and session duration, reliably delivered via beacon.',
   },
   {
     icon: '🐞',
     name: 'Error Tracker',
     threshold: 'error & unhandledrejection',
-    text: 'Ungefangene JavaScript-Fehler im Kontext der laufenden Formular-Session, verknüpft mit dem Feld, an dem gerade gearbeitet wurde. E-Mail-Adressen und Ziffernfolgen werden vorher entfernt.',
+    text: 'Uncaught JavaScript errors while someone works in the form, linked to the field they were on. Email addresses and digit sequences are removed first.',
   },
 ];
 
@@ -45,41 +45,41 @@ const EXTRAS = [
     icon: '📋',
     name: 'paste()',
     metric: 'paste',
-    text: 'Einfügen in ein Feld - und ob die Seite es blockiert. Gemessen wird nur die Längenänderung, nie der Inhalt.',
+    text: 'Pasting into a field - and whether the page blocks it. Only the change in length is measured, never the content.',
   },
   {
     icon: '🪄',
     name: 'autofill()',
     metric: 'autofill',
-    text: 'Vom Browser automatisch ausgefüllte Felder, gebündelt als ein Event. Erklärt Felder mit Wert, aber ohne Aufwand.',
+    text: 'Fields the browser filled in, bundled into one event. Explains fields with a value but no effort.',
   },
   {
     icon: '↩️',
     name: 'revisits()',
     metric: 'field_revisit',
-    text: 'Rückkehr zu einem Feld, nachdem schon ein anderes bearbeitet wurde - typisch nach einem Fehler weiter unten.',
+    text: 'Returning to a field after working on another one - typical after an error further down.',
   },
   {
     icon: '🧭',
     name: 'funnel()',
     metric: 'step_change',
-    text: 'Schrittwechsel über setStep() mit Verweildauer pro Schritt und Erkennung von Zurück-Navigation.',
+    text: 'Step changes via setStep(), with time per step and detection of going back.',
   },
   {
     icon: '🌀',
     name: 'thrash()',
     metric: 'thrash',
-    text: 'Hektisches Hin-und-her der Maus - ein Zeichen für Verwirrung oder Ungeduld. Schwellenwerte einstellbar.',
+    text: 'Frantic back-and-forth mouse movement - a sign of confusion or impatience. Thresholds are tunable.',
   },
 ];
 
 export function Metrics() {
   return (
-    <section id="metriken" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <section id="metrics" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <SectionHeading
-        eyebrow="Detektoren"
-        title="Sechs Signale, die Conversion-Zahlen nicht liefern"
-        description="Jeder Detektor ist einzeln konfigurierbar und liefert typisierte Events - lokal auswertbar oder direkt an deinen Collector."
+        eyebrow="Detectors"
+        title="Six signals conversion numbers cannot give you"
+        description="Every detector is configurable on its own and emits typed events - evaluate them locally or send them straight to your collector."
       />
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -102,8 +102,8 @@ export function Metrics() {
           Extras <span className="font-mono text-sm font-medium text-brand-300">formatir/extras</span>
         </h3>
         <p className="mt-2 max-w-2xl text-sm text-slate-400">
-          Fünf optionale Detektoren als Plugins - nicht im Kern-Bundle, zusammen 1,4 KB gzipped und
-          tree-shakebar.
+          Five optional detectors as plugins - not in the core bundle, 1.4 KB gzipped together and
+          tree-shakeable.
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {EXTRAS.map((extra) => (

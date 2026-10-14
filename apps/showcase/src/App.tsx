@@ -18,9 +18,9 @@ export default function App() {
 
       <main id="demo" className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <SectionHeading
-          eyebrow="Live-Demo"
-          title="Mehrstufiges Bewerbungsformular"
-          description="Fülle das Formular aus - oder sabotiere es absichtlich. Das Panel rechts zeigt jedes Signal in dem Moment, in dem das SDK es erkennt."
+          eyebrow="Live demo"
+          title="Multi-step application form"
+          description="Fill in the form - or sabotage it on purpose. The panel on the right shows every signal the moment the SDK detects it."
         />
 
         <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">

@@ -10,7 +10,7 @@ export function Footer() {
           <span className="chip">MIT</span>
         </div>
         <p className="text-center text-xs sm:text-right">
-          Verhaltensanalytik für Webformulare · Kern ~5,5 KB gzipped · ohne Abhängigkeiten
+          Behaviour analytics for web forms · core ~5.5 KB gzipped · zero dependencies
         </p>
       </div>
     </footer>

@@ -27,6 +27,8 @@ export function useFormatir(): Telemetry {
       // (hero, docs, telemetry panel) are ignored. A selector keeps working when
       // React swaps the form for the success screen and back.
       root: '#application',
+      // Errors from elsewhere on the page (or the telemetry panel) are ignored.
+      errorScope: 'root',
       transport: 'none',
       flushIntervalMs: 0,
       thresholds: { hesitationMs: 3000, rageClicks: 3, rageWindowMs: 500 },
