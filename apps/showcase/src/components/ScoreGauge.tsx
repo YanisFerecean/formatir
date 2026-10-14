@@ -17,7 +17,12 @@ export function ScoreGauge({
   const offset = CIRCUMFERENCE * (1 - Math.min(score, 100) / 100);
 
   return (
-    <div className="flex items-center gap-4">
+    <div
+      className="flex items-center gap-4"
+      data-testid="score"
+      data-score={score}
+      data-level={level}
+    >
       <div className="relative h-28 w-28 shrink-0">
         <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
           <circle

@@ -169,7 +169,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
               taken: {(done.durationMs / 1000).toFixed(1)} s, frustration score at submit:{' '}
               {done.score}/100.
             </p>
-            <button type="button" onClick={reset} className="btn btn-ghost mt-5">
+            <button type="button" onClick={reset} className="btn btn-ghost mt-5" data-testid="restart">
               Start a new session
             </button>
           </div>
@@ -180,7 +180,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
 
   return (
     // Formatir's root: the form plus its step header (the dead-click demo).
-    <section id="application" className="panel overflow-hidden">
+    <section id="application" className="panel overflow-hidden" data-step={step.id}>
       <div className="border-b border-slate-400/10 px-5 py-4 sm:px-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -195,7 +195,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
         </div>
 
         {/* Deliberately not clickable: a classic dead-click magnet. */}
-        <ol className="mt-4 grid grid-cols-4 gap-2">
+        <ol className="mt-4 grid grid-cols-4 gap-2" data-testid="step-indicator">
           {STEPS.map((s, i) => (
             <li key={s.id} className="min-w-0">
               <div
@@ -245,12 +245,19 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
 
             {s.id === 'experience' ? (
               /* Inert on purpose - clicking it produces a dead click. */
-              <div className="sm:col-span-2 rounded-xl border border-dashed border-slate-400/25 bg-slate-400/5 px-4 py-6 text-center">
+              <div
+                data-testid="cv-dropzone"
+                className="sm:col-span-2 rounded-xl border border-dashed border-slate-400/25 bg-slate-400/5 px-4 py-6 text-center">
                 <p className="text-sm font-semibold text-slate-300">Upload your CV</p>
                 <p className="mt-1 text-xs text-slate-500">
                   PDF or DOCX, max. 8 MB - drop the file here
                 </p>
-                <button type="button" onClick={simulateUpload} className="btn btn-ghost btn-mini mt-3">
+                <button
+                  type="button"
+                  onClick={simulateUpload}
+                  data-testid="simulate-upload"
+                  className="btn btn-ghost btn-mini mt-3"
+                >
                   Simulate failed upload
                 </button>
               </div>
@@ -291,17 +298,18 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
             type="button"
             onClick={goBack}
             disabled={stepIndex === 0}
+            data-testid="back"
             className="btn btn-ghost disabled:cursor-not-allowed disabled:opacity-40"
           >
             Back
           </button>
 
           {stepIndex < STEPS.length - 1 ? (
-            <button type="button" onClick={goNext} className="btn btn-primary">
+            <button type="button" onClick={goNext} className="btn btn-primary" data-testid="next">
               Next
             </button>
           ) : (
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" data-testid="submit">
               Submit application
             </button>
           )}

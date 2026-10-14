@@ -132,6 +132,8 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
   return (
     <aside
       data-formatir-ignore
+      data-testid="telemetry"
+      aria-label="Live telemetry"
       className="panel scroll-thin flex max-h-[calc(100vh-6rem)] flex-col overflow-y-auto lg:sticky lg:top-20"
     >
       <div className="flex items-center justify-between gap-3 border-b border-slate-400/10 px-5 py-4">
@@ -140,7 +142,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping-slow" />
             Live telemetry
           </h2>
-          <p className="mt-0.5 font-mono text-[11px] text-slate-500">
+          <p className="mt-0.5 font-mono text-[11px] text-slate-500" data-testid="session-id">
             {snapshot?.sessionId ?? 'initialising …'}
           </p>
         </div>
@@ -162,6 +164,8 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                 key={tile.key}
                 className={`panel-tight px-2 py-2 text-center ${value ? 'border-brand-500/40' : ''}`}
                 title={tile.label}
+                data-testid={`signal-${tile.key}`}
+                data-value={value}
               >
                 <div
                   className={`text-base font-bold ${value ? 'text-brand-300' : 'text-slate-600'}`}
@@ -180,10 +184,14 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
           <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
             Insights
           </h3>
-          <ul className="mt-2 space-y-2">
+          <ul className="mt-2 space-y-2" data-testid="insights">
             {warnings.length ? (
               warnings.map((warning) => (
-                <li key={warning.id} className={`rounded-lg border px-3 py-2 ${warning.tone}`}>
+                <li
+                  key={warning.id}
+                  data-insight={warning.id}
+                  className={`rounded-lg border px-3 py-2 ${warning.tone}`}
+                >
                   <p className="text-xs font-semibold text-slate-100">{warning.title}</p>
                   <p className="mt-0.5 text-[11px] leading-relaxed text-slate-400">
                     {warning.detail}
@@ -204,7 +212,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             Field effort
           </h3>
           <div className="scroll-thin mt-2 max-h-52 overflow-y-auto">
-            <table className="w-full text-left text-[11px]">
+            <table className="w-full text-left text-[11px]" data-testid="field-effort">
               <thead className="sticky top-0 bg-ink-900/95 text-slate-500">
                 <tr>
                   <th className="py-1.5 pr-2 font-medium">Field</th>
@@ -225,7 +233,15 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
               <tbody className="text-slate-300">
                 {fields.length ? (
                   fields.map((field) => (
-                    <tr key={field.key} className="border-t border-slate-400/10">
+                    <tr
+                      key={field.key}
+                      className="border-t border-slate-400/10"
+                      data-field={field.key}
+                      data-keystrokes={field.keystrokes}
+                      data-corrections={field.corrections}
+                      data-refills={field.refills}
+                      data-hesitation-ms={field.hesitationMs}
+                    >
                       <td className="truncate py-1.5 pr-2 font-medium text-slate-200">
                         {fieldLabel(field.key)}
                       </td>
@@ -276,13 +292,22 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             </div>
           </div>
 
-          <ul className="scroll-thin mt-2 max-h-72 space-y-1.5 overflow-y-auto pr-1">
+          <ul
+            className="scroll-thin mt-2 max-h-72 space-y-1.5 overflow-y-auto pr-1"
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions"
+            aria-label="Event stream, newest first"
+            data-testid="event-stream"
+          >
             {visible.length ? (
               visible.map((event) => {
                 const meta = METRIC_META[event.type];
                 return (
                   <li
                     key={event.id}
+                    data-event-type={event.type}
+                    data-field={event.field?.key}
                     className="animate-slide-in rounded-lg border border-slate-400/10 bg-ink-950/60 px-2.5 py-2"
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -308,12 +333,18 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             Demo triggers
           </h3>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <button type="button" onClick={triggerOutsideError} className="btn btn-ghost btn-mini">
+            <button
+              type="button"
+              onClick={triggerOutsideError}
+              data-testid="outside-error"
+              className="btn btn-ghost btn-mini"
+            >
               JS error outside the form
             </button>
             <button
               type="button"
               onClick={() => formatir?.reportDropoff()}
+              data-testid="report-dropoff"
               className="btn btn-ghost btn-mini"
             >
               Report drop-off
@@ -321,6 +352,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             <button
               type="button"
               onClick={() => formatir?.track('demo_ping', { source: 'panel' })}
+              data-testid="custom-event"
               className="btn btn-ghost btn-mini"
             >
               Custom event
