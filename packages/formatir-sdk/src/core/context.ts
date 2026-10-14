@@ -43,7 +43,8 @@ export interface SessionState {
 /** Everything a detector is allowed to touch. */
 export interface DetectorContext {
   opts: ResolvedOptions;
-  root: Document | Element;
+  /** Observed root, resolved on every read (selectors follow re-renders). */
+  readonly root: Document | Element;
   state: SessionState;
   /** Emit a metric event. */
   emit<K extends MetricName>(type: K, data: MetricPayloads[K], field?: FieldRef): void;

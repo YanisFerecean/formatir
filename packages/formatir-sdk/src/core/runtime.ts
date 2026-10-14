@@ -140,10 +140,13 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
   let lastScore = -1;
   let dead = false;
 
-  // Without a DOM (SSR) the root stays null; the instance is disabled anyway.
+  // A selector root is resolved on every use, so it survives a framework
+  // re-rendering or replacing the element. Without a DOM (SSR) it is null; the
+  // instance is disabled anyway.
   const hasDom = typeof document !== 'undefined';
-  const root: Document | Element =
-    (hasDom && (typeof opts.root === 'string' ? document.querySelector(opts.root) : opts.root)) ||
+  const selector = typeof opts.root === 'string' ? opts.root : undefined;
+  const resolveRoot = (): Document | Element =>
+    (hasDom && (selector ? document.querySelector(selector) : (opts.root as Element | undefined))) ||
     (hasDom ? document : (null as never));
 
   function emit<K extends MetricName>(
@@ -204,7 +207,9 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
 
   const ctx: DetectorContext = {
     opts,
-    root,
+    get root() {
+      return resolveRoot();
+    },
     state,
     emit,
     signal: (name, amount) => {
@@ -226,7 +231,13 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       teardown.push(() => steps.delete(fn));
     },
     ignored: (el) => !!opts.ignoreSelector && !!closestDeep(el, opts.ignoreSelector),
-    inScope: (el) => !!el && (root === document || containsDeep(root, el)),
+    inScope(el) {
+      if (!el) return false;
+      // Strict for selectors: while no element matches, nothing is in scope.
+      if (selector) return !!closestDeep(el, selector);
+      const root = resolveRoot();
+      return root === document || containsDeep(root, el);
+    },
     watches: (el) => ctx.inScope(el) && !ctx.ignored(el),
     hooks: {},
   };
@@ -236,6 +247,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
 
   /** Field for a name / id / `data-formatir-field` inside the root, if rendered. */
   const lookup = (name: string): Element | null => {
+    const root = hasDom ? resolveRoot() : null;
     if (!root) return null;
     const q = JSON.stringify(name);
     return root.querySelector(`[data-formatir-field=${q}],[name=${q}],[id=${q}]`);

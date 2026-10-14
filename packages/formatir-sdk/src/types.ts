@@ -230,7 +230,9 @@ export interface FormatirOptions {
   appId?: string;
   /**
    * Root to observe: clicks, fields and submits outside of it are ignored.
-   * Selector or element, defaults to the whole `document`.
+   * Selector or element, defaults to the whole `document`. A selector is
+   * matched on every event, so it keeps working when a framework replaces
+   * the element; while nothing matches it, nothing is tracked.
    */
   root?: string | Element;
   /** Reuse an existing session id instead of generating one. */
