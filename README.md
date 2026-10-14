@@ -66,6 +66,7 @@ More scripts:
 | `pnpm dev`             | Dev server; the SDK is aliased to its source (HMR).             |
 | `pnpm preview`         | Local preview of the production build.                          |
 | `pnpm test`            | Runs the SDK's Vitest suite (happy-dom).                        |
+| `pnpm test:package`    | Tests the packed tarball the way users install it.              |
 | `pnpm typecheck`       | `tsc --noEmit` across all packages (run after `pnpm build`).    |
 | `pnpm size`            | Gzip / Brotli size of every entry against its budget.           |
 | `pnpm changeset`       | Describe your change for the changelog.                         |

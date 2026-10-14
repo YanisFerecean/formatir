@@ -40,10 +40,11 @@ pnpm dev          # showcase with the SDK aliased to its source (HMR)
 | `pnpm build`     | Builds the SDK, checks size budgets, builds the showcase   |
 | `pnpm typecheck` | `tsc --noEmit` in every workspace                          |
 | `pnpm size`      | Size report for every entry point                          |
+| `pnpm test:package` | Packs the SDK, installs the tarball into an empty project and checks every entry point, the types and the `<script>` builds (after `pnpm build`) |
 
 Run `pnpm build` before `pnpm typecheck`: the showcase resolves `formatir`
 through the SDK's `dist` output (the dev server aliases it to the source
-instead). CI runs build -> typecheck -> test in that order.
+instead). CI runs build -> typecheck -> test -> test:package in that order.
 
 To try a single test file: `pnpm --filter formatir exec vitest run test/extras.test.ts`.
 
@@ -69,7 +70,7 @@ for a compact example.
 
 1. Fork the repo and create a branch: `git checkout -b feat/my-change`.
 2. Add or update tests in `packages/formatir-sdk/test`.
-3. Run `pnpm build && pnpm typecheck && pnpm test`.
+3. Run `pnpm build && pnpm typecheck && pnpm test && pnpm test:package`.
 4. Add a changeset if the published package changes: `pnpm changeset`.
 5. Update the docs (`packages/formatir-sdk/README.md`) for user-facing changes.
 6. Open a pull request and fill in the template.
@@ -90,6 +91,13 @@ New metrics need to be added in a few places so everything stays in sync:
 - a default weight in `src/core/score.ts`, if it should feed the score
 - the labels in `apps/showcase/src/lib/format.ts`
 - the docs
+
+### Adding an entry point
+
+Add it to `tsup.config.ts` and to `exports` in `package.json`, then list its
+public API in `expected` in `scripts/test-package.mjs` and import it in the
+type-check consumer there - `pnpm test:package` fails until the new entry
+loads from the packed tarball.
 
 ### Size budgets
 

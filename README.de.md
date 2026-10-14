@@ -66,6 +66,7 @@ Weitere Skripte:
 | `pnpm dev`              | Dev-Server; das SDK ist auf seinen Quellcode gealiast (HMR).    |
 | `pnpm preview`          | Lokale Vorschau des Produktions-Builds.                         |
 | `pnpm test`             | Vitest-Suite des SDK (happy-dom).                               |
+| `pnpm test:package`     | Testet das gepackte Tarball so, wie Nutzer es installieren.     |
 | `pnpm typecheck`        | `tsc --noEmit` über alle Pakete (nach `pnpm build`).            |
 | `pnpm size`             | Gzip-/Brotli-Größe aller Einstiegspunkte gegen ihre Budgets.    |
 | `pnpm changeset`        | Änderung für den Changelog beschreiben.                         |
