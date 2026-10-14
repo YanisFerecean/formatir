@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/formatir?color=7c3aed)](https://www.npmjs.com/package/formatir)
 [![bundle size](https://img.shields.io/badge/core%20gzipped-5.5%20KB-22d3ee)](https://bundlephobia.com/package/formatir)
 [![dependencies](https://img.shields.io/badge/dependencies-0-34d399)](https://www.npmjs.com/package/formatir?activeTab=dependencies)
-[![license](https://img.shields.io/npm/l/formatir?color=64748b)](../../LICENSE)
+[![license](https://img.shields.io/npm/l/formatir?color=64748b)](https://github.com/YanisFerecean/formatir/blob/main/LICENSE)
 
 > Privacy-first behaviour analytics for web forms and application processes.
 > Zero dependencies, **~5.5 KB gzipped**, works with plain HTML, React, Vue, Svelte and SPAs.
@@ -520,9 +520,9 @@ field counters), `ctx.signal(name)` (feed the score without an event) and
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md). Unreleased changes are collected as
-changesets in [`.changeset`](../../.changeset) until the next release.
+See [CHANGELOG.md](https://github.com/YanisFerecean/formatir/blob/main/packages/formatir-sdk/CHANGELOG.md). Unreleased changes are collected as
+changesets in [`.changeset`](https://github.com/YanisFerecean/formatir/tree/main/.changeset) until the next release.
 
 ## License
 
-[MIT](../../LICENSE)
+[MIT](https://github.com/YanisFerecean/formatir/blob/main/LICENSE)
