@@ -184,6 +184,17 @@ export interface FormatirOptions {
   thresholds?: Partial<Thresholds>;
   /** Convenience hook, called for every event before listeners. */
   onEvent?: MetricListener;
+  /**
+   * Last chance to rewrite or drop an event before it is queued for the
+   * collector. Return the (possibly modified) event, or `null` / `false` to
+   * drop it. Listeners still see the original event.
+   */
+  beforeSend?: (event: FormatirEvent) => FormatirEvent | null | false | undefined | void;
+  /**
+   * Scrub e-mail addresses, long digit runs (phone, IBAN, card numbers) and
+   * URL query strings from `js_error` messages and sources. Default `true`.
+   */
+  redactErrors?: boolean;
 }
 
 /** Point-in-time view of everything Formatir knows about the session. */

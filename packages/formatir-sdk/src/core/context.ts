@@ -17,6 +17,7 @@ export type ResolvedOptions = Required<
     | 'transport'
     | 'ignoreSelector'
     | 'debug'
+    | 'redactErrors'
   >
 > &
   FormatirOptions & { thresholds: Thresholds };

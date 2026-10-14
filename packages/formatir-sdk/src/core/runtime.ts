@@ -14,6 +14,15 @@ import { createScorer } from './score';
 import { createTransport } from './transport';
 import { fieldKey, fieldType, isField, type FieldElement } from './dom';
 import { noop, uid } from './util';
+
+/** Run a user hook; a throwing hook drops the event instead of breaking the page. */
+function safeCall<A, R>(fn: (a: A) => R, a: A): R | undefined {
+  try {
+    return fn(a);
+  } catch {
+    return undefined;
+  }
+}
 import { rageClick } from '../detectors/rageClick';
 import { deadClick } from '../detectors/deadClick';
 import { hesitation } from '../detectors/hesitation';
@@ -72,6 +81,7 @@ function resolve(options: FormatirOptions): ResolvedOptions {
     transport: 'beacon',
     ignoreSelector: '[data-formatir-ignore]',
     debug: false,
+    redactErrors: true,
     ...options,
     thresholds: { ...THRESHOLDS, ...options.thresholds },
   };
@@ -125,7 +135,8 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     if (opts.debug) console.debug('[formatir]', type, data);
     opts.onEvent?.(event);
     emitter.emit(event);
-    transport.push(event);
+    const out = opts.beforeSend ? safeCall(opts.beforeSend, event) : event;
+    if (out) transport.push(out);
 
     if (type === 'score') return;
     scorer.add(type);

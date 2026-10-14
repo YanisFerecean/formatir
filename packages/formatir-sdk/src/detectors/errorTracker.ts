@@ -1,5 +1,5 @@
 import type { Detector } from '../core/context';
-import { cut } from '../core/util';
+import { cut, redact, stripQuery } from '../core/util';
 
 /**
  * Uncaught client-side errors and unhandled promise rejections, tagged with the
@@ -17,11 +17,17 @@ export const errorTracker: Detector = (ctx) => {
   ): void => {
     if (reentrant) return;
     reentrant = true;
+    const scrub = ctx.opts.redactErrors;
+    let text = cut(message, 300) || 'unknown error';
+    if (scrub) {
+      text = redact(text);
+      if (source) source = stripQuery(source);
+    }
     try {
       ctx.emit(
         'js_error',
         {
-          message: cut(message, 300) || 'unknown error',
+          message: text,
           source: source ? cut(source, 200) : undefined,
           line,
           column,

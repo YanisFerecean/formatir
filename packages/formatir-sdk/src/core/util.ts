@@ -32,3 +32,12 @@ export function safe<T>(fn: (arg: T) => void, arg: T, debug?: boolean): void {
     if (debug) console.error('[formatir] listener failed', err);
   }
 }
+
+/** E-mail addresses and digit runs (phone, IBAN, card numbers) that may echo user input. */
+const PII = /[^\s@'"<>()]+@[^\s@'"<>()]+\.[a-z]{2,}|\+?\d[\d .\-/]{4,}\d/gi;
+
+/** Replace likely personal data in free text with a placeholder. */
+export const redact = (s: string): string => s.replace(PII, '[redacted]');
+
+/** Drop query string and fragment - they routinely carry tokens and ids. */
+export const stripQuery = (url: string): string => url.split(/[?#]/)[0] || '';
