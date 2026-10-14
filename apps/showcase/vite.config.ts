@@ -11,16 +11,21 @@ import tailwindcss from '@tailwindcss/vite';
 const repository = process.env.GITHUB_REPOSITORY?.split('/')[1];
 const base = process.env.VITE_BASE ?? (repository ? `/${repository}/` : '/');
 
-const sdkSource = fileURLToPath(
-  new URL('../../packages/formatir-sdk/src/index.ts', import.meta.url),
-);
+const sdkSource = fileURLToPath(new URL('../../packages/formatir-sdk/src', import.meta.url));
 
 export default defineConfig(({ command }) => ({
   base,
   plugins: [react(), tailwindcss()],
   resolve: {
     // Dev: edit the SDK and get HMR. Build: consume the published dist output.
-    alias: command === 'serve' ? ({ formatir: sdkSource } as Record<string, string>) : {},
+    // `formatir/<entry>` maps to `src/<entry>/index.ts`.
+    alias:
+      command === 'serve'
+        ? [
+            { find: /^formatir$/, replacement: `${sdkSource}/index.ts` },
+            { find: /^formatir\/(.+)$/, replacement: `${sdkSource}/$1/index.ts` },
+          ]
+        : [],
   },
   build: {
     outDir: 'dist',

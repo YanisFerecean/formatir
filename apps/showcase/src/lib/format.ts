@@ -23,6 +23,11 @@ export const METRIC_META: Record<MetricName, MetricMeta> = {
   js_error: { label: 'JS-Fehler', tone: 'bg-red-600/20 text-red-300', weight: 5 },
   score: { label: 'Score', tone: 'bg-violet-500/15 text-violet-300', weight: 1 },
   custom: { label: 'Custom', tone: 'bg-cyan-500/15 text-cyan-300', weight: 1 },
+  paste: { label: 'Einfügen', tone: 'bg-teal-500/15 text-teal-300', weight: 1 },
+  autofill: { label: 'Autofill', tone: 'bg-teal-500/15 text-teal-300', weight: 0 },
+  field_revisit: { label: 'Rückkehr', tone: 'bg-amber-500/15 text-amber-300', weight: 2 },
+  step_change: { label: 'Schritt', tone: 'bg-indigo-500/15 text-indigo-300', weight: 1 },
+  thrash: { label: 'Maus-Hektik', tone: 'bg-orange-500/15 text-orange-300', weight: 3 },
 };
 
 export const LEVEL_META: Record<FrustrationLevel, { label: string; color: string }> = {
@@ -91,6 +96,18 @@ export function describe(event: FormatirEvent): string {
       return `Frustrations-Score ${event.data.score} (${LEVEL_META[event.data.level].label})`;
     case 'custom':
       return String(event.data.name ?? 'custom');
+    case 'paste':
+      return event.data.blocked
+        ? `Einfügen in ${field} blockiert`
+        : `${field} · ${event.data.delta} Zeichen eingefügt (${event.data.pastes}×)`;
+    case 'autofill':
+      return `Browser-Autofill · ${event.data.fields.map(fieldLabel).join(', ')}`;
+    case 'field_revisit':
+      return `Zurück zu ${field} (${event.data.visits}. Besuch)`;
+    case 'step_change':
+      return `${event.data.back ? 'Zurück' : 'Weiter'} zu ${event.data.to ?? '-'} · ${ms(event.data.durationMs)} auf ${event.data.from ?? 'Start'}`;
+    case 'thrash':
+      return `Hektische Mausbewegung · ${event.data.reversals} Richtungswechsel in ${ms(event.data.withinMs)}`;
   }
 }
 

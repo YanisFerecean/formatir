@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { init, type FormatirEvent, type FormatirInstance, type FormatirSnapshot } from 'formatir';
+import { autofill, funnel, paste, revisits, thrash } from 'formatir/extras';
 
 const MAX_EVENTS = 120;
 
@@ -25,6 +26,7 @@ export function useFormatir(): Telemetry {
       transport: 'none',
       flushIntervalMs: 0,
       thresholds: { hesitationMs: 3000, rageClicks: 3, rageWindowMs: 500 },
+      plugins: [paste(), autofill(), revisits(), funnel(), thrash()],
     });
 
     setFormatir(instance);
