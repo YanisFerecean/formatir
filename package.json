@@ -15,9 +15,12 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "size": "pnpm --filter formatir size",
-    "clean": "pnpm -r exec rm -rf dist"
+    "clean": "pnpm -r exec rm -rf dist",
+    "changeset": "changeset",
+    "version-packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "typescript": "5.9.3"
   }
 }

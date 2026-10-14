@@ -115,7 +115,8 @@
   "files": [
     "dist",
     "schema",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public",
