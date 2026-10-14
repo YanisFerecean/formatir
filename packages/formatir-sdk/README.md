@@ -27,6 +27,7 @@ npm i formatir      # pnpm add formatir / yarn add formatir
 - [Validation adapters](#validation-adapters) - React Hook Form, Zod
 - [Collector](#collector-formatirserver) - `formatir/server` and the JSON schema
 - [Writing plugins](#writing-plugins)
+- [Requirements](#requirements) and [changelog](#changelog)
 
 ## Quickstart
 
@@ -199,6 +200,15 @@ formatir.destroy();
 `reportValidationError('email')` looks the name up as `data-formatir-field`,
 `name` or `id` inside the root, so the event carries the real field type and
 form when the field is rendered.
+
+`getSnapshot()` returns `sessionId`, `startedAt`, `durationMs`, `step`,
+`score`, `level`, `signals`, `fields` (per-field `FieldStats`), `events`
+(emitted so far), `queued` (waiting for the next flush) and `submitted`.
+
+Also exported: `VERSION`, `OPT_OUT_KEY` (`'formatir:optout'`) and `OUTBOX_KEY`
+(`'formatir:outbox'`) - the `localStorage` keys, e.g. for a privacy page that
+lists stored data - plus all public types (`FormatirEvent`, `MetricName`,
+`MetricPayloads`, `FormatirOptions`, `ScoreOptions`, `Plugin`, ...).
 
 ### Options
 
@@ -406,6 +416,20 @@ The context also offers `ctx.state` (session state), `ctx.stats(field)` (per
 field counters), `ctx.signal(name)` (feed the score without an event) and
 `ctx.onStep(fn)`.
 
+## Requirements
+
+- **Browsers:** any evergreen browser. The bundles target ES2019; storage
+  access is wrapped, so private mode or blocked `localStorage` only disables
+  the opt-out memory and the offline outbox. `autofill()` relies on the
+  `:autofill` / `:-webkit-autofill` pseudo-classes.
+- **SSR:** importing is safe on the server; `init()` without a `document`
+  returns a disabled instance (`enabled: false`). The React and Vue bindings
+  create instances only after mount.
+- **`formatir/server`:** any runtime with the Fetch API - Node >= 18, Deno,
+  Bun, Cloudflare Workers.
+- **Bindings:** React >= 18, Vue >= 3.3 (app-level cleanup needs 3.5). The
+  Svelte action and the validation adapters have no peer dependency.
+
 ## Bundle size
 
 | Entry                      | gzipped |
@@ -421,6 +445,11 @@ field counters), `ctx.signal(name)` (feed the score without an event) and
 
 `pnpm build` prints the sizes and fails above the budgets in
 `scripts/size.mjs` (6 KB for the core, 2 KB for the extras).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md). Unreleased changes are collected as
+changesets in [`.changeset`](../../.changeset) until the next release.
 
 ## License
 

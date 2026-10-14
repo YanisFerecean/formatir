@@ -37,9 +37,15 @@ pnpm dev          # showcase with the SDK aliased to its source (HMR)
 | Command          | What it does                                              |
 | ---------------- | --------------------------------------------------------- |
 | `pnpm test`      | Vitest suite (`packages/formatir-sdk/test`, happy-dom)     |
-| `pnpm typecheck` | `tsc --noEmit` in every workspace                          |
 | `pnpm build`     | Builds the SDK, checks size budgets, builds the showcase   |
+| `pnpm typecheck` | `tsc --noEmit` in every workspace                          |
 | `pnpm size`      | Size report for every entry point                          |
+
+Run `pnpm build` before `pnpm typecheck`: the showcase resolves `formatir`
+through the SDK's `dist` output (the dev server aliases it to the source
+instead). CI runs build -> typecheck -> test in that order.
+
+To try a single test file: `pnpm --filter formatir exec vitest run test/extras.test.ts`.
 
 ### Layout
 
@@ -63,7 +69,7 @@ for a compact example.
 
 1. Fork the repo and create a branch: `git checkout -b feat/my-change`.
 2. Add or update tests in `packages/formatir-sdk/test`.
-3. Run `pnpm typecheck && pnpm test && pnpm build`.
+3. Run `pnpm build && pnpm typecheck && pnpm test`.
 4. Add a changeset if the published package changes: `pnpm changeset`.
 5. Update the docs (`packages/formatir-sdk/README.md`) for user-facing changes.
 6. Open a pull request and fill in the template.
@@ -84,6 +90,33 @@ New metrics need to be added in a few places so everything stays in sync:
 - a default weight in `src/core/score.ts`, if it should feed the score
 - the labels in `apps/showcase/src/lib/format.ts`
 - the docs
+
+### Size budgets
+
+`scripts/size.mjs` fails the build when an entry grows past its gzip budget:
+6 KB for `formatir`, 2 KB for `formatir/extras`. Bindings, adapters and the
+server entry are reported but not budgeted. If a change has to raise a budget,
+do it in its own commit and explain why.
+
+## Dependencies
+
+Dependabot (`.github/dependabot.yml`) opens pull requests weekly for npm
+packages (development dependencies are grouped) and monthly for GitHub
+Actions.
+
+- **Green PR:** merge it.
+- **Red PR:** usually a breaking major version. Either adapt the code in the
+  PR, or add an `ignore` rule for that major and comment `@dependabot recreate`
+  so the rest of the group can land.
+- **TypeScript 7 is ignored on purpose.** tsup builds the type declarations
+  with the TypeScript compiler API, which the Go-based TypeScript 7 does not
+  provide. Remove the `typescript` ignore rule once tsup supports it.
+- **Workflow files:** PRs that change `.github/workflows/*` can only be merged
+  by a token with the `workflow` scope. If `gh pr merge` refuses, run
+  `gh auth refresh -s workflow` or merge in the GitHub UI.
+
+Runtime dependencies are not allowed in the published package - see the
+project principles above.
 
 ## Releasing (maintainers)
 

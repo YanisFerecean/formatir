@@ -25,7 +25,7 @@ JavaScript errors - in real time and without capturing a single typed value.
 ├── packages/formatir-sdk   # the SDK (npm package "formatir", ESM + CJS + IIFE)
 ├── apps/showcase           # Vite + React + Tailwind demo with a live dashboard
 ├── .changeset              # pending release notes (changesets)
-└── .github                 # CI, Pages deployment, npm publishing, templates
+└── .github                 # CI, Pages deployment, npm publishing, templates, Dependabot
 ```
 
 | Package                 | Description                                                         |
@@ -66,9 +66,10 @@ More scripts:
 | `pnpm dev`             | Dev server; the SDK is aliased to its source (HMR).             |
 | `pnpm preview`         | Local preview of the production build.                          |
 | `pnpm test`            | Runs the SDK's Vitest suite (happy-dom).                        |
-| `pnpm typecheck`       | `tsc --noEmit` across all packages.                             |
+| `pnpm typecheck`       | `tsc --noEmit` across all packages (run after `pnpm build`).    |
 | `pnpm size`            | Gzip / Brotli size of every entry against its budget.           |
 | `pnpm changeset`       | Describe your change for the changelog.                         |
+| `pnpm version-packages`| Bump the version and write the changelog (maintainers).         |
 
 ## The six core detectors
 
@@ -84,6 +85,10 @@ More scripts:
 Plus `session_start`, `field_focus`, `field_blur`, `validation_error`,
 `form_submit`, `score` and `custom` - and, through `formatir/extras`, `paste`,
 `autofill`, `field_revisit`, `step_change` and `thrash`.
+
+Field references carry the enclosing form (`form`) next to `key` and `type`,
+so several forms on one page stay apart. Fields added later and fields inside
+open shadow roots are tracked too.
 
 ## Integration
 
@@ -105,6 +110,20 @@ formatir.on('form_dropoff', (event) => {
   console.warn('Abandoned at', event.data.lastField?.key);
 });
 ```
+
+More at a glance:
+
+- **Frameworks:** `FormatirProvider` and hooks (`formatir/react`), a plugin and
+  composables (`formatir/vue`), `use:formatir` (`formatir/svelte`).
+- **Validation:** `formatirOnInvalid()` for React Hook Form, `withFormatir()`
+  for Zod - only the error type is reported, never the message.
+- **Collector:** `createHandler({ onBatch })` from `formatir/server` runs on
+  Node, Deno, Bun, Cloudflare Workers and Hono; `toNodeListener()` for Express.
+- **Multiple instances:** `Formatir.create({ root: '#newsletter' })`.
+- **Score tuning:** `score: { weights, saturation, levels }`.
+- **Offline:** undelivered batches are kept in `localStorage` and resent on
+  the next start or when the browser comes back online.
+- **Custom detectors:** `plugins: [myPlugin]`.
 
 The full API, options, bindings and collector docs live in
 [`packages/formatir-sdk/README.md`](packages/formatir-sdk/README.md).
@@ -130,6 +149,13 @@ rewrite or drop any event before it leaves the browser.
   `NPM_TOKEN` is needed, only a Trusted Publisher on npmjs.com.
   Release flow: merge PRs with changesets -> `pnpm version-packages` -> commit
   -> publish a GitHub release.
+
+## Maintenance
+
+Dependabot opens pull requests weekly for npm packages and monthly for GitHub
+Actions. Green PRs are safe to merge. TypeScript major updates are ignored
+until tsup supports TypeScript 7 - see
+[CONTRIBUTING.md](CONTRIBUTING.md#dependencies).
 
 ## Contributing
 
