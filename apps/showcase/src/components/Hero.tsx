@@ -45,7 +45,7 @@ export function Hero() {
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat value="5,5 KB" label="gzipped" />
             <Stat value="0" label="Dependencies" accent="text-accent-300" />
-            <Stat value="6" label="Detektoren" />
+            <Stat value="6 + 5" label="Detektoren" />
             <Stat value="0 PII" label="Klartext erfasst" accent="text-emerald-300" />
           </div>
         </div>
