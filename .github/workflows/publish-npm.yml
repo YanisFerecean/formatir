@@ -40,14 +40,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Build first: the showcase typechecks against the SDK's dist output.
+      - name: Build (fails above the gzip budgets)
+        run: pnpm --filter formatir build
+
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Test
         run: pnpm --filter formatir test
-
-      - name: Build (fails above the 6 KB gzip budget)
-        run: pnpm --filter formatir build
 
       - name: Verify package contents
         run: npm pack --dry-run

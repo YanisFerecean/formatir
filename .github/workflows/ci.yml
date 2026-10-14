@@ -24,9 +24,10 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm test
 
       # The SDK build runs scripts/size.mjs, which fails above the per-entry
-      # gzip budgets and writes a size table to the job summary.
+      # gzip budgets and writes a size table to the job summary. It must run
+      # before typecheck: the showcase resolves `formatir` through its dist.
       - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
