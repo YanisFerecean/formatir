@@ -23,10 +23,18 @@ export function init(options: FormatirOptions = {}): FormatirInstance {
   return current;
 }
 
+/**
+ * Create an independent instance that `init()` neither tracks nor replaces -
+ * e.g. one per form on a page with several forms (`root: '#newsletter'`).
+ * The caller owns its lifecycle and must `destroy()` it.
+ */
+export const create = (options: FormatirOptions = {}): FormatirInstance =>
+  createInstance(options);
+
 /** The instance created by the last `init()` call, if any. */
 export const getInstance = (): FormatirInstance | undefined => current;
 
-export const Formatir = { init, getInstance, version: VERSION };
+export const Formatir = { init, create, getInstance, version: VERSION };
 
 export { OPT_OUT_KEY, VERSION };
 export { OUTBOX_KEY } from './core/transport';

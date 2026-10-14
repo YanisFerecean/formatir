@@ -12,7 +12,7 @@ import type { DetectorContext, ResolvedOptions, SessionState } from './context';
 import { createEmitter } from './emitter';
 import { createScorer } from './score';
 import { createTransport } from './transport';
-import { fieldKey, fieldType, isField, type FieldElement } from './dom';
+import { fieldKey, fieldType, formOf, isField, type FieldElement } from './dom';
 import { noop, read, store, uid } from './util';
 
 /** `localStorage` key that remembers an opt-out across page loads. */
@@ -164,7 +164,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     }
   }
 
-  const ensure = (key: string, type: string): FieldStats => {
+  const ensure = (key: string, type: string, form?: string): FieldStats => {
     let s = state.fields.get(key);
     if (!s) {
       s = {
@@ -182,6 +182,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       };
       state.fields.set(key, s);
     }
+    if (form) s.form = form;
     if (state.step) s.step = state.step;
     return s;
   };
@@ -194,7 +195,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     signal: (name, amount) => {
       scorer.add(name, amount);
     },
-    stats: (el: FieldElement) => ensure(fieldKey(el), fieldType(el)),
+    stats: (el: FieldElement) => ensure(fieldKey(el), fieldType(el), formOf(el)),
     on(target, type, fn, capture) {
       const handler = fn as EventListener;
       target.addEventListener(type, handler, capture);
@@ -276,10 +277,13 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     },
     reportValidationError(field, reason = 'invalid') {
       const el = typeof field === 'string' ? null : field;
-      const key = el && isField(el) ? fieldKey(el) : String(field);
-      const stats = ensure(key, el && isField(el) ? fieldType(el) : 'custom');
+      const known = el && isField(el) ? el : null;
+      const key = known ? fieldKey(known) : String(field);
+      const stats = known
+        ? ensure(key, fieldType(known), formOf(known))
+        : ensure(key, state.fields.get(key)?.type || 'custom');
       stats.validationErrors++;
-      emit('validation_error', { reason }, { key, type: stats.type, step: state.step });
+      emit('validation_error', { reason }, { key, type: stats.type, form: stats.form, step: state.step });
     },
     markSubmitted() {
       state.submitted = true;

@@ -44,11 +44,27 @@ export function fieldKey(el: FieldElement): string {
 export const fieldType = (el: FieldElement): string =>
   (el as HTMLInputElement).type || el.tagName.toLowerCase();
 
-export const fieldRef = (el: FieldElement, step?: string): FieldRef => ({
-  key: fieldKey(el),
-  type: fieldType(el),
-  ...(step ? { step } : null),
-});
+/** Form identifier: `data-formatir-form`, `id` or `name`, else the fallback. */
+export const formIdOf = (el: Element | null, fallback = 'form'): string =>
+  (el &&
+    (el.getAttribute('data-formatir-form') ||
+      el.id ||
+      el.getAttribute('name'))) ||
+  fallback;
+
+/** Id of the form a field belongs to (honours the `form` attribute), if any. */
+export function formOf(el: FieldElement): string | undefined {
+  const form = (el as HTMLInputElement).form || el.closest('form');
+  return form ? formIdOf(form) : undefined;
+}
+
+export function fieldRef(el: FieldElement, step?: string): FieldRef {
+  const ref: FieldRef = { key: fieldKey(el), type: fieldType(el) };
+  const form = formOf(el);
+  if (form) ref.form = form;
+  if (step) ref.step = step;
+  return ref;
+}
 
 /** Character count of the current value. The value itself never leaves the DOM. */
 export function valueLength(el: FieldElement): number {

@@ -1,13 +1,6 @@
 import type { Detector } from '../core/context';
 import type { MetricPayloads } from '../types';
-import { fieldsIn, valueLength } from '../core/dom';
-
-export const formIdOf = (el: Element | null, fallback = 'form'): string =>
-  (el &&
-    (el.getAttribute('data-formatir-form') ||
-      el.id ||
-      el.getAttribute('name'))) ||
-  fallback;
+import { fieldsIn, formIdOf, valueLength } from '../core/dom';
 
 /** Field counts for the form - lengths and validity flags only, never values. */
 export function formProgress(root: ParentNode): {
@@ -37,7 +30,9 @@ export const dropOff: Detector = (ctx) => {
     state.dropped = true;
     const { fields, filled } = formProgress(ctx.root);
     ctx.emit('form_dropoff', {
-      formId: formIdOf(ctx.root instanceof Element ? ctx.root : document.querySelector('form')),
+      formId:
+        state.lastField.form ||
+        formIdOf(ctx.root instanceof Element ? ctx.root : document.querySelector('form')),
       lastField: state.lastField,
       durationMs: Date.now() - state.startedAt,
       fields,

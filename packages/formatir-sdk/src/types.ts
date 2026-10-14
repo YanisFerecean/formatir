@@ -27,6 +27,8 @@ export interface FieldRef {
   key: string;
   /** Input type (`text`, `email`, `select-one`, ...). Never a value. */
   type?: string;
+  /** Id of the enclosing form (`data-formatir-form`, `id` or `name`). */
+  form?: string;
   /** Logical step / fieldset the field belongs to (see `setStep()`). */
   step?: string;
 }

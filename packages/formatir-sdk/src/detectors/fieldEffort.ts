@@ -23,7 +23,7 @@ const VALIDITY: (keyof ValidityState)[] = [
 export const fieldEffort: Detector = (ctx) => {
   const emitEffort = (stats: FieldStats): void => {
     if (!stats.keystrokes && !stats.corrections && !stats.validationErrors) return;
-    ctx.emit('field_effort', { ...stats }, { key: stats.key, type: stats.type });
+    ctx.emit('field_effort', { ...stats }, { key: stats.key, type: stats.type, form: stats.form });
   };
 
   ctx.on<FocusEvent>(
@@ -70,7 +70,7 @@ export const fieldEffort: Detector = (ctx) => {
       ctx.signal('refill');
     }
     stats.length = len;
-    ctx.state.lastField = { key: stats.key, type: stats.type, step: ctx.state.step };
+    ctx.state.lastField = fieldRef(el, ctx.state.step);
   };
 
   ctx.on(document, 'input', onValueChange, true);
