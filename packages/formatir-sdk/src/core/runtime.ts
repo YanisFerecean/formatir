@@ -140,9 +140,11 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
   let lastScore = -1;
   let dead = false;
 
+  // Without a DOM (SSR) the root stays null; the instance is disabled anyway.
+  const hasDom = typeof document !== 'undefined';
   const root: Document | Element =
-    (typeof opts.root === 'string' ? document.querySelector(opts.root) : opts.root) ||
-    (typeof document !== 'undefined' ? document : (null as never));
+    (hasDom && (typeof opts.root === 'string' ? document.querySelector(opts.root) : opts.root)) ||
+    (hasDom ? document : (null as never));
 
   function emit<K extends MetricName>(
     type: K,
