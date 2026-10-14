@@ -41,3 +41,22 @@ export const redact = (s: string): string => s.replace(PII, '[redacted]');
 
 /** Drop query string and fragment - they routinely carry tokens and ids. */
 export const stripQuery = (url: string): string => url.split(/[?#]/)[0] || '';
+
+/** `localStorage` read that never throws (private mode, blocked storage, SSR). */
+export function read(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+/** `localStorage` write/remove (`null`) that never throws. */
+export function store(key: string, value: string | null): void {
+  try {
+    if (value == null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    /* storage unavailable */
+  }
+}

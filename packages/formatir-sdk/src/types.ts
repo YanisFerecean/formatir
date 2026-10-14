@@ -178,6 +178,12 @@ export interface FormatirOptions {
   transport?: 'beacon' | 'fetch' | 'none';
   /** Elements matching this selector are ignored entirely. */
   ignoreSelector?: string;
+  /**
+   * Attach the detectors right away. Set to `false` to wait for consent and
+   * call `start()` (or `optIn()`) later. Default `true`. A stored opt-out
+   * always wins over `autoStart`.
+   */
+  autoStart?: boolean;
   /** Log every event to the console. Default false. */
   debug?: boolean;
   /** Overrides for the detector thresholds. */

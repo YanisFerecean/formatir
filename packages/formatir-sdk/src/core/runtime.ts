@@ -13,7 +13,12 @@ import { createEmitter } from './emitter';
 import { createScorer } from './score';
 import { createTransport } from './transport';
 import { fieldKey, fieldType, isField, type FieldElement } from './dom';
-import { noop, uid } from './util';
+import { noop, read, store, uid } from './util';
+
+/** `localStorage` key that remembers an opt-out across page loads. */
+export const OPT_OUT_KEY = 'formatir:optout';
+
+const optedOut = (): boolean => read(OPT_OUT_KEY) === '1';
 
 /** Run a user hook; a throwing hook drops the event instead of breaking the page. */
 function safeCall<A, R>(fn: (a: A) => R, a: A): R | undefined {
@@ -52,6 +57,16 @@ export interface FormatirInstance {
   readonly version: string;
   /** False when the session was not sampled or the DOM is unavailable. */
   readonly enabled: boolean;
+  /** True while detectors are attached and events are collected. */
+  readonly active: boolean;
+  /** Attach the detectors (needed with `autoStart: false`, e.g. after consent). */
+  start(): void;
+  /** Detach the detectors but keep the session; `start()` resumes it. */
+  stop(): void;
+  /** Clear a stored opt-out and start collecting. */
+  optIn(): void;
+  /** Stop, discard queued events and remember the choice in `localStorage`. */
+  optOut(): void;
   /** Subscribe to a metric (or `'*'` for every event). Returns an unsubscribe. */
   on<K extends MetricName>(metric: K | '*', listener: MetricListener<K>): () => void;
   off<K extends MetricName>(metric: K | '*', listener: MetricListener<K>): void;
@@ -82,6 +97,7 @@ function resolve(options: FormatirOptions): ResolvedOptions {
     ignoreSelector: '[data-formatir-ignore]',
     debug: false,
     redactErrors: true,
+    autoStart: true,
     ...options,
     thresholds: { ...THRESHOLDS, ...options.thresholds },
   };
@@ -194,7 +210,12 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     hooks: {},
   };
 
-  if (enabled) {
+  let active = false;
+  let started = false;
+
+  const start = (): void => {
+    if (active || dead || !enabled || optedOut()) return;
+    active = true;
     for (const detector of DETECTORS) detector(ctx);
 
     // Registered after the detectors so their unload events make it into the batch.
@@ -203,18 +224,47 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       if (document.visibilityState === 'hidden') transport.flush('hidden');
     });
 
+    if (started) return;
+    started = true;
     emit('session_start', {
       url: location.href,
       referrer: document.referrer,
       viewport: { w: innerWidth, h: innerHeight },
       language: navigator.language,
     });
-  }
+  };
+
+  const stop = (): void => {
+    for (const fn of teardown) fn();
+    for (const id of timers) clearTimeout(id);
+    teardown.length = timers.length = 0;
+    ctx.hooks = {};
+    active = false;
+  };
+
+  if (opts.autoStart) start();
 
   return {
     sessionId,
     version: VERSION,
     enabled,
+    get active() {
+      return active;
+    },
+    start,
+    stop() {
+      stop();
+      transport.flush('stop');
+    },
+    optIn() {
+      store(OPT_OUT_KEY, null);
+      start();
+    },
+    optOut() {
+      store(OPT_OUT_KEY, '1');
+      stop();
+      transport.clear();
+    },
     on: (metric, listener) => emitter.on(metric, listener as MetricListener),
     off: (metric, listener) => emitter.off(metric, listener as MetricListener),
     track: (name, data) => emit('custom', { name, ...data }),
@@ -248,10 +298,8 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     flush: () => transport.flush('manual'),
     destroy() {
       if (dead) return;
+      stop();
       dead = true;
-      for (const fn of teardown) fn();
-      for (const id of timers) clearTimeout(id);
-      teardown.length = 0;
       transport.dispose();
       emitter.clear();
     },

@@ -8,6 +8,8 @@ export interface Transport {
   push(event: FormatirEvent): void;
   flush(reason: string): void;
   size(): number;
+  /** Drop queued events without sending them. */
+  clear(): void;
   dispose(): void;
 }
 
@@ -68,6 +70,9 @@ export function createTransport(
     },
     flush,
     size: () => queue.length,
+    clear() {
+      queue.length = 0;
+    },
     dispose() {
       if (timer) clearInterval(timer);
       flush('dispose');

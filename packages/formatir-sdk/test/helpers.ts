@@ -28,8 +28,16 @@ export function useDom(html = FORM): void {
 /** Start an instance that records every event locally. */
 export function start(options: FormatirOptions = {}) {
   const events: FormatirEvent[] = [];
-  const formatir = init({ transport: 'none', flushIntervalMs: 0, ...options });
-  formatir.on('*', (e) => void events.push(e));
+  // `onEvent` also sees the `session_start` emitted during init().
+  const formatir = init({
+    transport: 'none',
+    flushIntervalMs: 0,
+    ...options,
+    onEvent: (e) => {
+      events.push(e);
+      options.onEvent?.(e);
+    },
+  });
   const of = <K extends MetricName>(type: K): FormatirEvent<K>[] =>
     events.filter((e) => e.type === type) as FormatirEvent<K>[];
   return { formatir, events, of };

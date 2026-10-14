@@ -18,6 +18,7 @@ export type ResolvedOptions = Required<
     | 'ignoreSelector'
     | 'debug'
     | 'redactErrors'
+    | 'autoStart'
   >
 > &
   FormatirOptions & { thresholds: Thresholds };

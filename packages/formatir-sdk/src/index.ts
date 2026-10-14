@@ -8,7 +8,7 @@
  * formatir.on('rage_click', (e) => console.log(e.data.selector));
  * ```
  */
-import { createInstance, VERSION, type FormatirInstance } from './core/runtime';
+import { createInstance, OPT_OUT_KEY, VERSION, type FormatirInstance } from './core/runtime';
 import type { FormatirOptions } from './types';
 
 let current: FormatirInstance | undefined;
@@ -28,7 +28,7 @@ export const getInstance = (): FormatirInstance | undefined => current;
 
 export const Formatir = { init, getInstance, version: VERSION };
 
-export { VERSION };
+export { OPT_OUT_KEY, VERSION };
 /** Alias of {@link VERSION}, convenient on the `window.Formatir` global. */
 export const version = VERSION;
 export type { FormatirInstance };
