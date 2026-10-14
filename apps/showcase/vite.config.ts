@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { llmsTxtPlugin } from './llms.ts';
 
 /**
  * GitHub Pages serves project sites from `/<repository-name>/`, so the base is
@@ -15,7 +16,7 @@ const sdkSource = fileURLToPath(new URL('../../packages/formatir-sdk/src', impor
 
 export default defineConfig(({ command }) => ({
   base,
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), llmsTxtPlugin()],
   resolve: {
     // Dev: edit the SDK and get HMR. Build: consume the published dist output.
     // `formatir/<entry>` maps to `src/<entry>/index.ts`.

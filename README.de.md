@@ -31,7 +31,7 @@ JavaScript-Fehler - in Echtzeit und ohne eine einzige Klartext-Eingabe zu erfass
 | Paket                   | Beschreibung                                                         |
 | ----------------------- | -------------------------------------------------------------------- |
 | `packages/formatir-sdk` | Detektoren, Frustrations-Score, Transport, Bindings und Collector. [Doku](packages/formatir-sdk/README.md) |
-| `apps/showcase`         | Mehrstufiges Bewerbungsformular mit Telemetrie-Panel und Entwicklerdoku. |
+| `apps/showcase`         | Mehrstufiges Bewerbungsformular mit Telemetrie-Panel, Testszenarien und Entwicklerdoku. |
 
 ### Einstiegspunkte
 
@@ -127,6 +127,17 @@ Weitere Möglichkeiten im Überblick:
 
 Die vollständige API-, Options-, Binding- und Collector-Dokumentation (auf
 Englisch) steht in [`packages/formatir-sdk/README.md`](packages/formatir-sdk/README.md).
+
+### Die Demo testen (Menschen, E2E-Suites, KI-Agenten)
+
+Die Live-Demo (auf Englisch) enthält einen Abschnitt **Test scenarios**, der
+zeigt, wie sich jede Metrik auslösen lässt, und veröffentlicht dieselbe
+Anleitung als [`/llms.txt`](https://yanisferecean.github.io/formatir/llms.txt).
+Auf der Seite ist `window.formatir` die Instanz, `window.formatirEvents` das
+vollständige Event-Log, und für jedes Event wird ein `formatir:event`
+DOM-Event ausgelöst; das Telemetrie-Panel stellt seinen Zustand über
+`data-testid`- und `data-*`-Attribute bereit. Szenarien und `llms.txt` werden
+aus `apps/showcase/src/data/scenarios.ts` erzeugt.
 
 ## Privacy by Design
 

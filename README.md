@@ -31,7 +31,7 @@ JavaScript errors - in real time and without capturing a single typed value.
 | Package                 | Description                                                         |
 | ----------------------- | ------------------------------------------------------------------- |
 | `packages/formatir-sdk` | Detectors, frustration score, transport, bindings and collector. [Docs](packages/formatir-sdk/README.md) |
-| `apps/showcase`         | Multi-step application form with a telemetry panel and developer docs. |
+| `apps/showcase`         | Multi-step application form with a telemetry panel, test scenarios and developer docs. |
 
 ### Entry points
 
@@ -127,6 +127,16 @@ More at a glance:
 
 The full API, options, bindings and collector docs live in
 [`packages/formatir-sdk/README.md`](packages/formatir-sdk/README.md).
+
+### Testing the demo (people, E2E suites, AI agents)
+
+The live demo has a **Test scenarios** section listing how to trigger every
+metric, and publishes the same guide as
+[`/llms.txt`](https://yanisferecean.github.io/formatir/llms.txt). On the page,
+`window.formatir` is the instance, `window.formatirEvents` the full event log,
+and a `formatir:event` DOM event fires for every event; the telemetry panel
+exposes its state through `data-testid` and `data-*` attributes. Scenarios and
+`llms.txt` are generated from `apps/showcase/src/data/scenarios.ts`.
 
 ## Privacy by design
 
