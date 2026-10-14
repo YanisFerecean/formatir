@@ -92,3 +92,18 @@ describe('score options', () => {
     expect(of('score').pop()?.data.score).toBeGreaterThan(80);
   });
 });
+
+describe('reportValidationError', () => {
+  it('resolves a field name to the rendered field', () => {
+    const { of, formatir } = start();
+    formatir.reportValidationError('email', 'required');
+    expect(of('validation_error')[0]?.field).toMatchObject({ key: 'email', type: 'email', form: 'apply' });
+  });
+
+  it('accepts names that are not rendered', () => {
+    const { of, formatir } = start();
+    formatir.reportValidationError('address.zip', 'too_small');
+    expect(of('validation_error')[0]?.field).toMatchObject({ key: 'address.zip', type: 'custom' });
+    expect(formatir.getSnapshot().fields[0]?.validationErrors).toBe(1);
+  });
+});

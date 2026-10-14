@@ -82,7 +82,11 @@ export interface FormatirInstance {
   track(name: string, data?: Record<string, unknown>): void;
   /** Tag subsequent events with a logical step (wizard page, fieldset, ...). */
   setStep(step: string | undefined): void;
-  /** Report a framework-level validation error (React Hook Form, Zod, ...). */
+  /**
+   * Report a framework-level validation error (React Hook Form, Zod, ...).
+   * A string is matched against `data-formatir-field`, `name` and `id` in the
+   * root, so the event carries the field's type and form when it is rendered.
+   */
   reportValidationError(field: string | Element, reason?: string): void;
   /** Mark the form as completed so no drop-off is reported. */
   markSubmitted(): void;
@@ -228,6 +232,13 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
   let active = false;
   let started = false;
 
+  /** Field for a name / id / `data-formatir-field` inside the root, if rendered. */
+  const lookup = (name: string): Element | null => {
+    if (!root) return null;
+    const q = JSON.stringify(name);
+    return root.querySelector(`[data-formatir-field=${q}],[name=${q}],[id=${q}]`);
+  };
+
   const start = (): void => {
     if (active || dead || !enabled || optedOut()) return;
     active = true;
@@ -292,7 +303,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       if (from !== step) steps.forEach((fn) => fn(step, from));
     },
     reportValidationError(field, reason = 'invalid') {
-      const el = typeof field === 'string' ? null : field;
+      const el = typeof field === 'string' ? lookup(field) : field;
       const known = el && isField(el) ? el : null;
       const key = known ? fieldKey(known) : String(field);
       const stats = known
