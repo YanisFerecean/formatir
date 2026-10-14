@@ -237,7 +237,7 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4(@types/node@26.6.1)(happy-dom@21.0.1)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.27.7)(jiti@2.7.0))
       vue:
-        specifier: ^3.5.44
+        specifier: 3.5.44
         version: 3.5.44(typescript@5.9.3)
 
 packages:

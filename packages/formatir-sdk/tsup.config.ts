@@ -15,6 +15,7 @@ export default defineConfig([
       index: 'src/index.ts',
       extras: 'src/extras/index.ts',
       react: 'src/react/index.ts',
+      vue: 'src/vue/index.ts',
     },
     format: ['esm', 'cjs'],
     // Bindings share the core's module instance instead of bundling a copy.
