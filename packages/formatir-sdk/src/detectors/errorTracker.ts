@@ -1,5 +1,10 @@
 import type { Detector } from '../core/context';
+import { targetOf } from '../core/dom';
 import { cut, redact, stripQuery } from '../core/util';
+
+/** With `errorScope: 'root'`, errors this soon after an interaction in the root count. */
+const RECENT_MS = 2000;
+const INTERACTIONS = ['click', 'input', 'keydown', 'focusin', 'submit'];
 
 /**
  * Uncaught client-side errors and unhandled promise rejections, tagged with the
@@ -7,6 +12,27 @@ import { cut, redact, stripQuery } from '../core/util';
  */
 export const errorTracker: Detector = (ctx) => {
   let reentrant = false;
+  let touchedAt = -Infinity;
+
+  const scoped = ctx.opts.errorScope === 'root';
+  if (scoped) {
+    // Capture phase on document runs before the page's own handlers, so an
+    // error thrown by a submit or click handler already sees the interaction.
+    for (const type of INTERACTIONS) {
+      ctx.on(
+        document,
+        type,
+        (e: Event) => {
+          if (ctx.watches(targetOf(e))) touchedAt = Date.now();
+        },
+        true,
+      );
+    }
+  }
+
+  /** Is the user working in the root right now? */
+  const inForm = (): boolean =>
+    !scoped || Date.now() - touchedAt <= RECENT_MS || ctx.watches(document.activeElement);
 
   const report = (
     message: unknown,
@@ -15,7 +41,7 @@ export const errorTracker: Detector = (ctx) => {
     line?: number,
     column?: number,
   ): void => {
-    if (reentrant) return;
+    if (reentrant || !inForm()) return;
     reentrant = true;
     const scrub = ctx.opts.redactErrors;
     let text = cut(message, 300) || 'unknown error';

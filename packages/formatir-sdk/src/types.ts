@@ -276,6 +276,14 @@ export interface FormatirOptions {
    */
   beforeSend?: (event: FormatirEvent) => FormatirEvent | null | false | undefined | void;
   /**
+   * Which uncaught errors become `js_error` events. `'page'` (default) reports
+   * every error during the session. `'root'` reports only errors that happen
+   * while focus is inside `root` or within 2 s of an interaction there
+   * (click, input, key press, focus, submit) - e.g. a failing submit handler -
+   * so errors from unrelated widgets elsewhere on the page are ignored.
+   */
+  errorScope?: 'page' | 'root';
+  /**
    * Scrub e-mail addresses, long digit runs (phone, IBAN, card numbers) and
    * URL query strings from `js_error` messages and sources. Default `true`.
    */

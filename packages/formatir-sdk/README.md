@@ -75,6 +75,11 @@ Without a bundler:
 Lifecycle events round out the stream: `session_start`, `field_focus`,
 `field_blur`, `form_submit`, `score` and `custom`.
 
+By default `js_error` reports every uncaught error during the session. With
+`errorScope: 'root'` it only reports errors that happen while focus is inside
+`root` or within 2 s of a click, input, key press, focus or submit there, so a
+broken chat widget elsewhere on the page does not count against your form.
+
 Field references carry `key`, `type`, `step` and - when the field sits in a
 `<form>` - `form` (`data-formatir-form`, `id` or `name`), so several forms on
 one page stay apart. Fields added after `init()` and fields inside open shadow
@@ -228,6 +233,7 @@ lists stored data - plus all public types (`FormatirEvent`, `MetricName`,
 | `thresholds`      | see detectors              | `rageClicks`, `rageWindowMs`, `rageRadiusPx`, `deadClickMs`, `hesitationMs`. |
 | `score`           | see above                  | `weights`, `saturation`, `levels`.                                 |
 | `plugins`         | `[]`                       | Extra detectors, e.g. from `formatir/extras`.                      |
+| `errorScope`      | `'page'`                   | `'root'` reports only errors that happen while the user works in `root`. |
 | `redactErrors`    | `true`                     | Scrub PII from `js_error` payloads.                                |
 | `beforeSend`      | -                          | Rewrite (return the event) or drop (`null` / `false`) before sending. |
 | `onEvent`         | -                          | Convenience hook for every event.                                  |

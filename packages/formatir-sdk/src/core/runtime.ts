@@ -111,6 +111,7 @@ function resolve(options: FormatirOptions): ResolvedOptions {
     redactErrors: true,
     autoStart: true,
     offline: true,
+    errorScope: 'page',
     ...options,
     thresholds: { ...THRESHOLDS, ...options.thresholds },
   };
