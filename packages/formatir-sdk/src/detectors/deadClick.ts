@@ -1,5 +1,5 @@
 import type { Detector } from '../core/context';
-import { isElement, isInteractive, selectorOf } from '../core/dom';
+import { isElement, isInteractive, selectorOf, targetOf } from '../core/dom';
 
 /**
  * Attribute changes a user can actually perceive. Frameworks rewrite structural
@@ -31,21 +31,25 @@ export const deadClick: Detector = (ctx) => {
       return;
     }
   });
-  observer.observe(document.documentElement, {
-    subtree: true,
-    childList: true,
-    attributes: true,
-    characterData: true,
-  });
+  const watch = (node: Node): void =>
+    observer.observe(node, { subtree: true, childList: true, attributes: true, characterData: true });
+  // Shadow roots are observed lazily, the first time a click lands inside one.
+  const shadows = new WeakSet<Node>();
+  watch(document.documentElement);
   ctx.cleanup(() => observer.disconnect());
 
   ctx.on<MouseEvent>(
     document,
     'click',
     (e) => {
-      const el = e.target;
+      const el = targetOf(e);
       if (!isElement(el) || !ctx.watches(el) || isInteractive(el)) return;
       if (e.detail > 1) return; // part of a double click / selection gesture
+      const shadow = el.getRootNode();
+      if (shadow !== document && !shadows.has(shadow)) {
+        shadows.add(shadow);
+        watch(shadow);
+      }
 
       const at = Date.now();
       const url = location.href;

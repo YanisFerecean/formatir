@@ -1,5 +1,5 @@
 import type { Detector } from '../core/context';
-import { isElement, isField, fieldRef, selectorOf } from '../core/dom';
+import { fieldRef, isElement, isField, selectorOf, targetOf } from '../core/dom';
 
 interface Hit {
   x: number;
@@ -21,7 +21,7 @@ export const rageClick: Detector = (ctx) => {
     document,
     'click',
     (e) => {
-      const el = e.target;
+      const el = targetOf(e);
       if (!isElement(el) || !ctx.watches(el)) return;
 
       const t = Date.now();

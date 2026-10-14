@@ -11,8 +11,36 @@ const FIELDS = 'input,select,textarea,[contenteditable]';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-export const isElement = (t: EventTarget | null): t is Element =>
+export const isElement = (t: EventTarget | null | undefined): t is Element =>
   !!t && (t as Node).nodeType === 1;
+
+/**
+ * The element that really received the event. Events leaving an open shadow
+ * root are retargeted to its host; `composedPath()[0]` still is the inner node.
+ */
+export function targetOf(e: Event): Element | null {
+  const t = e.composedPath ? e.composedPath()[0] : e.target;
+  return isElement(t) ? t : null;
+}
+
+/** Parent across shadow boundaries (a shadow root's parent is its host). */
+const up = (n: Node): Node | null => n.parentNode || (n as ShadowRoot).host || null;
+
+/** `root.contains(el)`, but also true for nodes inside nested shadow roots. */
+export function containsDeep(root: Node, el: Node | null): boolean {
+  for (let n = el; n; n = up(n)) if (n === root) return true;
+  return false;
+}
+
+/** `el.closest(selector)` that keeps searching past shadow hosts. */
+export function closestDeep(el: Element | null, selector: string): Element | null {
+  while (el) {
+    const hit = el.closest(selector);
+    if (hit) return hit;
+    el = (el.getRootNode() as ShadowRoot).host || null;
+  }
+  return null;
+}
 
 /** True when the element itself or an ancestor is interactive. */
 export function isInteractive(el: Element): boolean {

@@ -12,7 +12,15 @@ import type { DetectorContext, ResolvedOptions, SessionState } from './context';
 import { createEmitter } from './emitter';
 import { createScorer } from './score';
 import { createTransport } from './transport';
-import { fieldKey, fieldType, formOf, isField, type FieldElement } from './dom';
+import {
+  closestDeep,
+  containsDeep,
+  fieldKey,
+  fieldType,
+  formOf,
+  isField,
+  type FieldElement,
+} from './dom';
 import { noop, read, store, uid } from './util';
 
 /** `localStorage` key that remembers an opt-out across page loads. */
@@ -206,8 +214,8 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       timers.push(id);
     },
     cleanup: (fn) => void teardown.push(fn),
-    ignored: (el) => !!el && !!opts.ignoreSelector && !!el.closest(opts.ignoreSelector),
-    inScope: (el) => !!el && (root === document || (root as Element).contains(el)),
+    ignored: (el) => !!opts.ignoreSelector && !!closestDeep(el, opts.ignoreSelector),
+    inScope: (el) => !!el && (root === document || containsDeep(root, el)),
     watches: (el) => ctx.inScope(el) && !ctx.ignored(el),
     hooks: {},
   };

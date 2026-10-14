@@ -1,6 +1,6 @@
 import type { Detector } from '../core/context';
 import type { FieldStats } from '../types';
-import { fieldRef, isField, valueLength } from '../core/dom';
+import { fieldRef, isField, targetOf, valueLength } from '../core/dom';
 
 /** Derive a non-PII reason from the browser's ValidityState. */
 const VALIDITY: (keyof ValidityState)[] = [
@@ -30,7 +30,7 @@ export const fieldEffort: Detector = (ctx) => {
     document,
     'focusin',
     (e) => {
-      const el = e.target as Element | null;
+      const el = targetOf(e);
       if (!isField(el) || !ctx.watches(el)) return;
       const stats = ctx.stats(el);
       stats.focusCount++;
@@ -46,7 +46,7 @@ export const fieldEffort: Detector = (ctx) => {
     document,
     'keydown',
     (e) => {
-      const el = e.target as Element | null;
+      const el = targetOf(e);
       if (!isField(el) || !ctx.watches(el)) return;
       if (e.key !== 'Backspace' && e.key !== 'Delete') return;
       ctx.stats(el).corrections++;
@@ -56,7 +56,7 @@ export const fieldEffort: Detector = (ctx) => {
   );
 
   const onValueChange = (e: Event): void => {
-    const el = e.target as Element | null;
+    const el = targetOf(e);
     if (!isField(el) || !ctx.watches(el)) return;
     const stats = ctx.stats(el);
     const len = valueLength(el);
@@ -81,7 +81,7 @@ export const fieldEffort: Detector = (ctx) => {
     document,
     'invalid',
     (e) => {
-      const el = e.target as Element | null;
+      const el = targetOf(e);
       if (!isField(el) || !ctx.watches(el)) return;
       const stats = ctx.stats(el);
       stats.validationErrors++;
@@ -96,7 +96,7 @@ export const fieldEffort: Detector = (ctx) => {
     document,
     'focusout',
     (e) => {
-      const el = e.target as Element | null;
+      const el = targetOf(e);
       if (!isField(el) || !ctx.watches(el)) return;
       const stats = ctx.stats(el);
       const focus = ctx.state.focus;

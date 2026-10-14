@@ -1,6 +1,6 @@
 import type { Detector } from '../core/context';
 import type { MetricPayloads } from '../types';
-import { fieldsIn, formIdOf, valueLength } from '../core/dom';
+import { fieldsIn, formIdOf, targetOf, valueLength } from '../core/dom';
 
 /** Field counts for the form - lengths and validity flags only, never values. */
 export function formProgress(root: ParentNode): {
@@ -46,7 +46,7 @@ export const dropOff: Detector = (ctx) => {
     document,
     'submit',
     (e) => {
-      const form = e.target as Element | null;
+      const form = targetOf(e);
       if (!form || !ctx.watches(form)) return;
       const { fields, filled, valid } = formProgress(form as ParentNode);
       // A `noValidate` form submits even when it is invalid - such an attempt is
