@@ -50,6 +50,9 @@ jobs:
       - name: Test
         run: pnpm --filter formatir test
 
+      - name: Test the packed package
+        run: pnpm --filter formatir test:package
+
       - name: Verify package contents
         run: npm pack --dry-run
         working-directory: packages/formatir-sdk

@@ -31,3 +31,7 @@ jobs:
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
+
+      # Packs the SDK, installs the tarball into an empty project and checks
+      # every entry point, the types and the <script> builds.
+      - run: pnpm test:package
