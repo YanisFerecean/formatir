@@ -43,6 +43,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Test
+        run: pnpm --filter formatir test
+
       - name: Build (fails above the 6 KB gzip budget)
         run: pnpm --filter formatir build
 

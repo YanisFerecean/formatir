@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   verify:
-    name: Typecheck and build
+    name: Typecheck, test and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,5 +24,9 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
       - run: pnpm typecheck
+      - run: pnpm test
+
+      # The SDK build runs scripts/size.mjs, which fails above the per-entry
+      # gzip budgets and writes a size table to the job summary.
+      - run: pnpm build
