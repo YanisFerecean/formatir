@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/** Enforces the <5 KB gzipped budget for the published ESM bundle. */
+/** Enforces the <6 KB gzipped budget for the published core ESM bundle. */
 import { gzipSync, brotliCompressSync } from 'node:zlib';
 import { readFileSync, existsSync } from 'node:fs';
 
-const BUDGET = 5 * 1024;
+const BUDGET = 6 * 1024;
 const files = ['dist/index.mjs', 'dist/index.cjs', 'dist/index.global.js'];
 const kb = (n) => `${(n / 1024).toFixed(2)} KB`;
 

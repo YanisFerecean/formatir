@@ -164,5 +164,5 @@ router.beforeEach(() => formatir.reportDropoff());
 
 ## Bundle size
 
-`pnpm build` prints the gzipped size and fails above the 5 KB budget.
+`pnpm build` prints the gzipped size and fails above the 6 KB budget.
 
