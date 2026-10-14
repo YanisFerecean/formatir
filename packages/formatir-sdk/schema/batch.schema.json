@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unpkg.com/formatir/schema/batch.schema.json",
+  "title": "Formatir batch",
+  "description": "Envelope the Formatir SDK POSTs to its endpoint. Mirrors parseBatch() from formatir/server.",
+  "type": "object",
+  "required": [
+    "sdk",
+    "v",
+    "sessionId",
+    "sentAt",
+    "reason",
+    "events"
+  ],
+  "properties": {
+    "sdk": {
+      "const": "formatir"
+    },
+    "v": {
+      "type": "string",
+      "description": "SDK version."
+    },
+    "appId": {
+      "type": "string"
+    },
+    "sessionId": {
+      "type": "string"
+    },
+    "sentAt": {
+      "type": "number",
+      "description": "Client clock when the batch was sent (epoch ms)."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Flush trigger: batch, interval, hidden, pagehide, manual, stop, dispose."
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    }
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "ts",
+        "t",
+        "sessionId",
+        "data"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "session_start",
+            "field_focus",
+            "field_blur",
+            "rage_click",
+            "dead_click",
+            "hesitation",
+            "field_effort",
+            "validation_error",
+            "form_submit",
+            "form_dropoff",
+            "js_error",
+            "score",
+            "custom",
+            "paste",
+            "autofill",
+            "field_revisit",
+            "step_change",
+            "thrash"
+          ]
+        },
+        "ts": {
+          "type": "number",
+          "description": "Wall clock (epoch ms)."
+        },
+        "t": {
+          "type": "number",
+          "description": "Milliseconds since session start."
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "step": {
+          "type": "string"
+        },
+        "field": {
+          "$ref": "#/$defs/fieldRef"
+        },
+        "data": {
+          "type": "object",
+          "description": "Metric payload, see MetricPayloads in the type definitions."
+        }
+      }
+    },
+    "fieldRef": {
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "form": {
+          "type": "string"
+        },
+        "step": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

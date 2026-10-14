@@ -19,6 +19,7 @@ export default defineConfig([
       svelte: 'src/svelte/index.ts',
       'react-hook-form': 'src/react-hook-form/index.ts',
       zod: 'src/zod/index.ts',
+      server: 'src/server/index.ts',
     },
     format: ['esm', 'cjs'],
     // Bindings share the core's module instance instead of bundling a copy.
