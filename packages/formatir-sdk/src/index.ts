@@ -29,6 +29,7 @@ export const getInstance = (): FormatirInstance | undefined => current;
 export const Formatir = { init, getInstance, version: VERSION };
 
 export { OPT_OUT_KEY, VERSION };
+export { OUTBOX_KEY } from './core/transport';
 /** Alias of {@link VERSION}, convenient on the `window.Formatir` global. */
 export const version = VERSION;
 export type { FormatirInstance };

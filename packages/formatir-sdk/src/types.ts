@@ -191,6 +191,12 @@ export interface FormatirOptions {
   sampleRate?: number;
   /** Transport strategy. Default `beacon` (falls back to keepalive fetch). */
   transport?: 'beacon' | 'fetch' | 'none';
+  /**
+   * Keep batches that could not be delivered (offline, network error, 429 or
+   * 5xx) in `localStorage` and resend them on the next start or when the
+   * browser comes back online. At most 20 batches are kept. Default `true`.
+   */
+  offline?: boolean;
   /** Elements matching this selector are ignored entirely. */
   ignoreSelector?: string;
   /**

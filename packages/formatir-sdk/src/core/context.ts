@@ -19,6 +19,7 @@ export type ResolvedOptions = Required<
     | 'debug'
     | 'redactErrors'
     | 'autoStart'
+    | 'offline'
   >
 > &
   FormatirOptions & { thresholds: Thresholds };

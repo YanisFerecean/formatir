@@ -98,6 +98,7 @@ function resolve(options: FormatirOptions): ResolvedOptions {
     debug: false,
     redactErrors: true,
     autoStart: true,
+    offline: true,
     ...options,
     thresholds: { ...THRESHOLDS, ...options.thresholds },
   };
@@ -223,6 +224,8 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     ctx.on(document, 'visibilitychange', () => {
       if (document.visibilityState === 'hidden') transport.flush('hidden');
     });
+    ctx.on(window, 'online', transport.replay);
+    transport.replay();
 
     if (started) return;
     started = true;
