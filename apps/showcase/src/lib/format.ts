@@ -3,31 +3,31 @@ import { FIELD_LABELS } from '../data/steps';
 
 export interface MetricMeta {
   label: string;
-  /** Tailwind classes for the badge. */
+  /** Tailwind classes for the badge: grey, red for problem signals, green for a submit. */
   tone: string;
   /** Severity ranking used for filtering and ordering. */
   weight: number;
 }
 
 export const METRIC_META: Record<MetricName, MetricMeta> = {
-  session_start: { label: 'Session', tone: 'bg-slate-500/15 text-slate-300', weight: 0 },
-  field_focus: { label: 'Focus', tone: 'bg-slate-500/15 text-slate-300', weight: 0 },
-  field_blur: { label: 'Blur', tone: 'bg-slate-500/15 text-slate-300', weight: 0 },
-  rage_click: { label: 'Rage Click', tone: 'bg-rose-500/15 text-rose-300', weight: 5 },
-  dead_click: { label: 'Dead Click', tone: 'bg-orange-500/15 text-orange-300', weight: 4 },
-  hesitation: { label: 'Hesitation', tone: 'bg-amber-500/15 text-amber-300', weight: 3 },
-  field_effort: { label: 'Field effort', tone: 'bg-sky-500/15 text-sky-300', weight: 2 },
-  validation_error: { label: 'Validation', tone: 'bg-red-500/15 text-red-300', weight: 4 },
-  form_submit: { label: 'Submit', tone: 'bg-emerald-500/15 text-emerald-300', weight: 1 },
-  form_dropoff: { label: 'Drop-off', tone: 'bg-fuchsia-500/15 text-fuchsia-300', weight: 5 },
-  js_error: { label: 'JS error', tone: 'bg-red-600/20 text-red-300', weight: 5 },
-  score: { label: 'Score', tone: 'bg-violet-500/15 text-violet-300', weight: 1 },
-  custom: { label: 'Custom', tone: 'bg-cyan-500/15 text-cyan-300', weight: 1 },
-  paste: { label: 'Paste', tone: 'bg-teal-500/15 text-teal-300', weight: 1 },
-  autofill: { label: 'Autofill', tone: 'bg-teal-500/15 text-teal-300', weight: 0 },
-  field_revisit: { label: 'Revisit', tone: 'bg-amber-500/15 text-amber-300', weight: 2 },
-  step_change: { label: 'Step', tone: 'bg-indigo-500/15 text-indigo-300', weight: 1 },
-  thrash: { label: 'Thrash', tone: 'bg-orange-500/15 text-orange-300', weight: 3 },
+  session_start: { label: 'Session', tone: 'bg-neutral-100 text-neutral-700', weight: 0 },
+  field_focus: { label: 'Focus', tone: 'bg-neutral-100 text-neutral-700', weight: 0 },
+  field_blur: { label: 'Blur', tone: 'bg-neutral-100 text-neutral-700', weight: 0 },
+  rage_click: { label: 'Rage Click', tone: 'bg-red-50 text-red-700', weight: 5 },
+  dead_click: { label: 'Dead Click', tone: 'bg-red-50 text-red-700', weight: 4 },
+  hesitation: { label: 'Hesitation', tone: 'bg-red-50 text-red-700', weight: 3 },
+  field_effort: { label: 'Field effort', tone: 'bg-neutral-100 text-neutral-700', weight: 2 },
+  validation_error: { label: 'Validation', tone: 'bg-red-50 text-red-700', weight: 4 },
+  form_submit: { label: 'Submit', tone: 'bg-green-50 text-green-700', weight: 1 },
+  form_dropoff: { label: 'Drop-off', tone: 'bg-red-50 text-red-700', weight: 5 },
+  js_error: { label: 'JS error', tone: 'bg-red-50 text-red-700', weight: 5 },
+  score: { label: 'Score', tone: 'bg-neutral-100 text-neutral-700', weight: 1 },
+  custom: { label: 'Custom', tone: 'bg-neutral-100 text-neutral-700', weight: 1 },
+  paste: { label: 'Paste', tone: 'bg-neutral-100 text-neutral-700', weight: 1 },
+  autofill: { label: 'Autofill', tone: 'bg-neutral-100 text-neutral-700', weight: 0 },
+  field_revisit: { label: 'Revisit', tone: 'bg-neutral-100 text-neutral-700', weight: 2 },
+  step_change: { label: 'Step', tone: 'bg-neutral-100 text-neutral-700', weight: 1 },
+  thrash: { label: 'Thrash', tone: 'bg-red-50 text-red-700', weight: 3 },
 };
 
 export const LEVEL_META: Record<FrustrationLevel, { label: string; color: string }> = {

@@ -158,13 +158,10 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
   if (done) {
     return (
       <section className="panel p-6 sm:p-8">
-        <div className="flex items-start gap-4">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-500/15 text-xl">
-            ✓
-          </div>
+        <div>
           <div>
-            <h2 className="text-xl font-bold text-slate-50">Application received</h2>
-            <p className="mt-2 text-sm text-slate-400">
+            <h2 className="text-xl font-semibold text-green-700">Application received</h2>
+            <p className="mt-2 text-sm text-neutral-600">
               Formatir marked the session as completed, so no abandonment is reported. Time
               taken: {(done.durationMs / 1000).toFixed(1)} s, frustration score at submit:{' '}
               {done.score}/100.
@@ -181,13 +178,13 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
   return (
     // Formatir's root: the form plus its step header (the dead-click demo).
     <section id="application" className="panel overflow-hidden" data-step={step.id}>
-      <div className="border-b border-slate-400/10 px-5 py-4 sm:px-7">
+      <div className="border-b border-neutral-200 px-5 py-4 sm:px-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-400">
+            <p className="text-xs font-semibold text-blue-700">
               Application · Senior Frontend Engineer
             </p>
-            <h2 className="mt-1 text-lg font-bold text-slate-50">{step.title}</h2>
+            <h2 className="mt-1 text-lg font-bold text-neutral-900">{step.title}</h2>
           </div>
           <span className="chip">
             Step {stepIndex + 1} / {STEPS.length}
@@ -200,12 +197,12 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
             <li key={s.id} className="min-w-0">
               <div
                 className={`h-1 rounded-full transition-colors ${
-                  i <= stepIndex ? 'bg-brand-500' : 'bg-slate-500/25'
+                  i <= stepIndex ? 'bg-blue-600' : 'bg-neutral-200'
                 }`}
               />
               <span
                 className={`mt-1.5 block truncate text-[11px] ${
-                  i === stepIndex ? 'font-semibold text-slate-200' : 'text-slate-500'
+                  i === stepIndex ? 'font-semibold text-neutral-800' : 'text-neutral-500'
                 }`}
               >
                 {s.short}
@@ -222,7 +219,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
         onSubmit={onSubmit}
         className="px-5 py-6 sm:px-7"
       >
-        <p className="mb-5 text-sm text-slate-400">{step.description}</p>
+        <p className="mb-5 text-sm text-neutral-600">{step.description}</p>
 
         {STEPS.map((s, i) => (
           <div
@@ -247,9 +244,9 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
               /* Inert on purpose - clicking it produces a dead click. */
               <div
                 data-testid="cv-dropzone"
-                className="sm:col-span-2 rounded-xl border border-dashed border-slate-400/25 bg-slate-400/5 px-4 py-6 text-center">
-                <p className="text-sm font-semibold text-slate-300">Upload your CV</p>
-                <p className="mt-1 text-xs text-slate-500">
+                className="sm:col-span-2 rounded border border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-center">
+                <p className="text-sm font-semibold text-neutral-700">Upload your CV</p>
+                <p className="mt-1 text-xs text-neutral-500">
                   PDF or DOCX, max. 8 MB - drop the file here
                 </p>
                 <button
@@ -267,24 +264,24 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
               <div className="sm:col-span-2 space-y-4">
                 {summary.map((group) => (
                   <div key={group.title} className="panel-tight px-4 py-3">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-brand-400">
+                    <p className="text-xs font-semibold text-blue-700">
                       {group.title}
                     </p>
                     <dl className="mt-2 grid gap-x-6 gap-y-1 sm:grid-cols-2">
                       {group.entries.length ? (
                         group.entries.map((entry) => (
                           <div key={entry.label} className="flex justify-between gap-3 text-sm">
-                            <dt className="text-slate-500">{entry.label}</dt>
-                            <dd className="truncate font-medium text-slate-200">{entry.value}</dd>
+                            <dt className="text-neutral-500">{entry.label}</dt>
+                            <dd className="truncate font-medium text-neutral-800">{entry.value}</dd>
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-slate-500">Nothing filled in yet.</p>
+                        <p className="text-sm text-neutral-500">Nothing filled in yet.</p>
                       )}
                     </dl>
                   </div>
                 ))}
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   This summary lives only in the demo's React state. Formatir sees nothing but
                   character counts, counters and time deltas.
                 </p>
@@ -293,7 +290,7 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
           </div>
         ))}
 
-        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-slate-400/10 pt-5">
+        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 pt-5">
           <button
             type="button"
             onClick={goBack}

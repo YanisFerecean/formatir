@@ -109,9 +109,8 @@ export function Docs() {
   const [tab, setTab] = useState<TabName>('React');
 
   return (
-    <section id="docs" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+    <section id="docs" className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <SectionHeading
-        eyebrow="Documentation"
         title="Integrated in three lines"
         description="Formatir is dependency-free and tree-shakeable, and ships ESM, CJS and a classic <script> build - plus bindings for React, Vue and Svelte, validation adapters and a collector."
       />
@@ -176,7 +175,7 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
 
         <div className="space-y-5">
           <div className="panel overflow-hidden">
-            <div className="scroll-thin flex gap-1 overflow-x-auto border-b border-slate-400/10 px-3 py-2">
+            <div className="scroll-thin flex gap-1 overflow-x-auto border-b border-neutral-200 px-3 py-2">
               {(Object.keys(TABS) as TabName[]).map((name) => (
                 <button
                   key={name}
@@ -188,16 +187,16 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
                 </button>
               ))}
             </div>
-            <pre className="scroll-thin max-h-[22rem] overflow-auto px-4 py-3 text-[12.5px] leading-relaxed text-slate-200">
+            <pre className="scroll-thin max-h-[22rem] overflow-auto px-4 py-3 text-[12.5px] leading-relaxed text-neutral-800">
               <code className="font-mono">{TABS[tab]}</code>
             </pre>
           </div>
 
           <div className="panel p-5">
-            <h3 className="text-sm font-bold text-slate-50">Options</h3>
+            <h3 className="text-sm font-bold text-neutral-900">Options</h3>
             <div className="scroll-thin mt-3 max-h-64 overflow-auto">
               <table className="w-full text-left text-xs">
-                <thead className="text-slate-500">
+                <thead className="text-neutral-500">
                   <tr>
                     <th className="pb-2 pr-3 font-medium">Option</th>
                     <th className="pb-2 pr-3 font-medium">Default</th>
@@ -206,10 +205,10 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
                 </thead>
                 <tbody>
                   {OPTIONS.map(([name, value, text]) => (
-                    <tr key={name} className="border-t border-slate-400/10 align-top">
-                      <td className="py-1.5 pr-3 font-mono text-brand-300">{name}</td>
-                      <td className="py-1.5 pr-3 font-mono text-slate-500">{value}</td>
-                      <td className="py-1.5 text-slate-400">{text}</td>
+                    <tr key={name} className="border-t border-neutral-200 align-top">
+                      <td className="py-1.5 pr-3 font-mono text-blue-700">{name}</td>
+                      <td className="py-1.5 pr-3 font-mono text-neutral-500">{value}</td>
+                      <td className="py-1.5 text-neutral-600">{text}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -220,24 +219,21 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
       </div>
 
       <div className="panel mt-6 p-6">
-        <div className="flex flex-wrap items-start gap-4">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-emerald-500/15 text-lg">
-            🔒
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-slate-50">Privacy by design</h3>
-            <ul className="mt-3 grid gap-2 text-sm text-slate-400 sm:grid-cols-2">
+        <div>
+          <div>
+            <h3 className="text-sm font-bold text-neutral-900">Privacy by design</h3>
+            <ul className="mt-3 grid gap-2 text-sm text-neutral-600 sm:grid-cols-2">
               <li>No values, no text, no clipboard - only lengths, counters and time deltas.</li>
               <li>
-                Fields are identified by <code className="font-mono text-brand-300">name</code>,{' '}
-                <code className="font-mono text-brand-300">id</code> or{' '}
-                <code className="font-mono text-brand-300">data-formatir-field</code>.
+                Fields are identified by <code className="font-mono text-blue-700">name</code>,{' '}
+                <code className="font-mono text-blue-700">id</code> or{' '}
+                <code className="font-mono text-blue-700">data-formatir-field</code>.
               </li>
               <li>
                 Click targets as structural selectors (tag / id / class / position) - never as text.
               </li>
               <li>
-                <code className="font-mono text-brand-300">data-formatir-ignore</code> removes whole
+                <code className="font-mono text-blue-700">data-formatir-ignore</code> removes whole
                 subtrees from measurement.
               </li>
               <li>
@@ -245,19 +241,19 @@ const newsletter = Formatir.create({ root: '#newsletter' });`}
                 Only the <code className="font-mono">ValidityState</code> is recorded.
               </li>
               <li>
-                Error messages in <code className="font-mono text-brand-300">js_error</code> are
+                Error messages in <code className="font-mono text-blue-700">js_error</code> are
                 scrubbed of email addresses and digit sequences (phone, IBAN).
               </li>
               <li>
-                <code className="font-mono text-brand-300">beforeSend</code> can rewrite or drop any
+                <code className="font-mono text-blue-700">beforeSend</code> can rewrite or drop any
                 event before it is sent.
               </li>
               <li>
-                Consent built in: <code className="font-mono text-brand-300">autoStart: false</code>,{' '}
-                <code className="font-mono text-brand-300">optIn()</code> and{' '}
-                <code className="font-mono text-brand-300">optOut()</code> (remembered).
+                Consent built in: <code className="font-mono text-blue-700">autoStart: false</code>,{' '}
+                <code className="font-mono text-blue-700">optIn()</code> and{' '}
+                <code className="font-mono text-blue-700">optOut()</code> (remembered).
               </li>
-              <li>Sampling via <code className="font-mono text-brand-300">sampleRate</code>.</li>
+              <li>Sampling via <code className="font-mono text-blue-700">sampleRate</code>.</li>
             </ul>
           </div>
         </div>

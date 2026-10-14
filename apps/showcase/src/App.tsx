@@ -17,9 +17,8 @@ export default function App() {
       <Header />
       <Hero />
 
-      <main id="demo" className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <main id="demo" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <SectionHeading
-          eyebrow="Live demo"
           title="Multi-step application form"
           description="Fill in the form - or sabotage it on purpose. The panel on the right shows every signal the moment the SDK detects it."
         />

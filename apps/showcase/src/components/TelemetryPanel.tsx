@@ -30,7 +30,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
       id: 'score',
       title: 'Frustration is rising',
       detail: `Score ${snapshot.score}/100 - this session is at risk of being abandoned.`,
-      tone: 'border-severe/40 bg-severe/10',
+      tone: 'border-red-200 bg-red-50',
     });
   }
   if (s.rage_click) {
@@ -38,7 +38,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
       id: 'rage',
       title: `${s.rage_click}× Rage Click`,
       detail: 'Repeated fast clicks point to an element that does not respond.',
-      tone: 'border-rose-400/40 bg-rose-500/10',
+      tone: 'border-red-200 bg-red-50',
     });
   }
   if (s.js_error) {
@@ -46,7 +46,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
       id: 'err',
       title: `${s.js_error} JavaScript error${s.js_error === 1 ? '' : 's'}`,
       detail: 'Errors during the form session - a high risk of abandonment.',
-      tone: 'border-red-400/40 bg-red-500/10',
+      tone: 'border-red-200 bg-red-50',
     });
   }
   if (s.dead_click) {
@@ -54,7 +54,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
       id: 'dead',
       title: `${s.dead_click}× click without effect`,
       detail: 'Users take a static element for an interactive one.',
-      tone: 'border-orange-400/40 bg-orange-500/10',
+      tone: 'border-amber-200 bg-amber-50',
     });
   }
 
@@ -64,7 +64,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
         id: `refill-${field.key}`,
         title: `${fieldLabel(field.key)}: ${field.refills} Refills`,
         detail: 'The field was cleared and refilled several times - review its wording.',
-        tone: 'border-amber-400/40 bg-amber-500/10',
+        tone: 'border-amber-200 bg-amber-50',
       });
     }
     if (field.validationErrors >= 2) {
@@ -72,7 +72,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
         id: `val-${field.key}`,
         title: `${fieldLabel(field.key)}: ${field.validationErrors} failed attempts`,
         detail: 'The validation rule is apparently hard to meet.',
-        tone: 'border-red-400/40 bg-red-500/10',
+        tone: 'border-red-200 bg-red-50',
       });
     }
     if (field.hesitationMs >= 3000) {
@@ -80,7 +80,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
         id: `hes-${field.key}`,
         title: `${fieldLabel(field.key)}: ${ms(field.hesitationMs)} hesitation`,
         detail: 'A long pause before the first input - a help text may be missing.',
-        tone: 'border-amber-400/40 bg-amber-500/10',
+        tone: 'border-amber-200 bg-amber-50',
       });
     }
     if (field.corrections >= 12) {
@@ -88,7 +88,7 @@ function buildWarnings(snapshot: FormatirSnapshot): Warning[] {
         id: `corr-${field.key}`,
         title: `${fieldLabel(field.key)}: ${field.corrections} corrections`,
         detail: 'Lots of fixing - reconsider the input format or mask.',
-        tone: 'border-sky-400/40 bg-sky-500/10',
+        tone: 'border-neutral-200 bg-neutral-50',
       });
     }
   }
@@ -136,13 +136,13 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
       aria-label="Live telemetry"
       className="panel scroll-thin flex max-h-[calc(100vh-6rem)] flex-col overflow-y-auto lg:sticky lg:top-20"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-slate-400/10 px-5 py-4">
+      <div className="flex items-center justify-between gap-3 border-b border-neutral-200 px-5 py-4">
         <div>
-          <h2 className="flex items-center gap-2 text-sm font-bold text-slate-50">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping-slow" />
+          <h2 className="flex items-center gap-2 text-sm font-bold text-neutral-900">
+            <span className="h-2 w-2 rounded-full bg-green-600" />
             Live telemetry
           </h2>
-          <p className="mt-0.5 font-mono text-[11px] text-slate-500" data-testid="session-id">
+          <p className="mt-0.5 font-mono text-[11px] text-neutral-500" data-testid="session-id">
             {snapshot?.sessionId ?? 'initialising …'}
           </p>
         </div>
@@ -162,17 +162,17 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
             return (
               <div
                 key={tile.key}
-                className={`panel-tight px-2 py-2 text-center ${value ? 'border-brand-500/40' : ''}`}
+                className={`panel-tight px-2 py-2 text-center ${value ? 'border-blue-300' : ''}`}
                 title={tile.label}
                 data-testid={`signal-${tile.key}`}
                 data-value={value}
               >
                 <div
-                  className={`text-base font-bold ${value ? 'text-brand-300' : 'text-slate-600'}`}
+                  className={`text-base font-bold ${value ? 'text-blue-700' : 'text-neutral-400'}`}
                 >
                   {Math.round(value)}
                 </div>
-                <div className="truncate text-[9.5px] uppercase tracking-wide text-slate-500">
+                <div className="truncate text-[9.5px] text-neutral-500">
                   {tile.label}
                 </div>
               </div>
@@ -181,7 +181,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         </div>
 
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <h3 className="text-xs font-semibold text-neutral-900">
             Insights
           </h3>
           <ul className="mt-2 space-y-2" data-testid="insights">
@@ -190,16 +190,16 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                 <li
                   key={warning.id}
                   data-insight={warning.id}
-                  className={`rounded-lg border px-3 py-2 ${warning.tone}`}
+                  className={`rounded border px-3 py-2 ${warning.tone}`}
                 >
-                  <p className="text-xs font-semibold text-slate-100">{warning.title}</p>
-                  <p className="mt-0.5 text-[11px] leading-relaxed text-slate-400">
+                  <p className="text-xs font-semibold text-neutral-900">{warning.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-neutral-600">
                     {warning.detail}
                   </p>
                 </li>
               ))
             ) : (
-              <li className="panel-tight px-3 py-3 text-[11px] leading-relaxed text-slate-500">
+              <li className="panel-tight px-3 py-3 text-[11px] leading-relaxed text-neutral-500">
                 Nothing unusual yet. Click the step indicator three times quickly, leave a field
                 empty for a while or clear a filled-in field - the detectors fire right away.
               </li>
@@ -208,12 +208,12 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         </div>
 
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <h3 className="text-xs font-semibold text-neutral-900">
             Field effort
           </h3>
           <div className="scroll-thin mt-2 max-h-52 overflow-y-auto">
             <table className="w-full text-left text-[11px]" data-testid="field-effort">
-              <thead className="sticky top-0 bg-ink-900/95 text-slate-500">
+              <thead className="sticky top-0 bg-white text-neutral-500">
                 <tr>
                   <th className="py-1.5 pr-2 font-medium">Field</th>
                   <th className="py-1.5 px-1 text-right font-medium" title="Keystrokes">
@@ -230,29 +230,29 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                   </th>
                 </tr>
               </thead>
-              <tbody className="text-slate-300">
+              <tbody className="text-neutral-700">
                 {fields.length ? (
                   fields.map((field) => (
                     <tr
                       key={field.key}
-                      className="border-t border-slate-400/10"
+                      className="border-t border-neutral-200"
                       data-field={field.key}
                       data-keystrokes={field.keystrokes}
                       data-corrections={field.corrections}
                       data-refills={field.refills}
                       data-hesitation-ms={field.hesitationMs}
                     >
-                      <td className="truncate py-1.5 pr-2 font-medium text-slate-200">
+                      <td className="truncate py-1.5 pr-2 font-medium text-neutral-800">
                         {fieldLabel(field.key)}
                       </td>
                       <td className="px-1 text-right tabular-nums">{field.keystrokes}</td>
                       <td
-                        className={`px-1 text-right tabular-nums ${field.corrections >= 10 ? 'text-amber-300' : ''}`}
+                        className={`px-1 text-right tabular-nums ${field.corrections >= 10 ? 'text-amber-700' : ''}`}
                       >
                         {field.corrections}
                       </td>
                       <td
-                        className={`px-1 text-right tabular-nums ${field.refills ? 'text-rose-300' : ''}`}
+                        className={`px-1 text-right tabular-nums ${field.refills ? 'text-red-700' : ''}`}
                       >
                         {field.refills}
                       </td>
@@ -263,7 +263,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-3 text-slate-500">
+                    <td colSpan={5} className="py-3 text-neutral-500">
                       No field touched yet.
                     </td>
                   </tr>
@@ -275,7 +275,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
 
         <div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <h3 className="text-xs font-semibold text-neutral-900">
               Event stream
             </h3>
             <div className="flex items-center gap-1.5">
@@ -308,20 +308,20 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
                     key={event.id}
                     data-event-type={event.type}
                     data-field={event.field?.key}
-                    className="animate-slide-in rounded-lg border border-slate-400/10 bg-ink-950/60 px-2.5 py-2"
+                    className="rounded border border-neutral-200 bg-neutral-50 px-2.5 py-2"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className={`chip border-transparent ${meta.tone}`}>{meta.label}</span>
-                      <span className="font-mono text-[10px] text-slate-600">{clock(event.ts)}</span>
+                      <span className="font-mono text-[10px] text-neutral-400">{clock(event.ts)}</span>
                     </div>
-                    <p className="mt-1 text-[11px] leading-relaxed text-slate-300">
+                    <p className="mt-1 text-[11px] leading-relaxed text-neutral-700">
                       {describe(event)}
                     </p>
                   </li>
                 );
               })
             ) : (
-              <li className="panel-tight px-3 py-3 text-[11px] text-slate-500">
+              <li className="panel-tight px-3 py-3 text-[11px] text-neutral-500">
                 No events yet - start with the form on the left.
               </li>
             )}
@@ -329,7 +329,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         </div>
 
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <h3 className="text-xs font-semibold text-neutral-900">
             Demo triggers
           </h3>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -358,7 +358,7 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
               Custom event
             </button>
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+          <p className="mt-2 text-[11px] leading-relaxed text-neutral-500">
             Only errors that happen while someone works in the form are reported (
             <code className="font-mono">errorScope: 'root'</code>) - the button above is ignored.
             Try <em>Simulate failed upload</em> in step 2 instead.
@@ -366,14 +366,14 @@ export function TelemetryPanel({ formatir, events, snapshot, clearEvents }: Prop
         </div>
 
         <details className="panel-tight px-3 py-2">
-          <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <summary className="cursor-pointer text-xs font-semibold text-neutral-900">
             Beacon-Payload
           </summary>
-          <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+          <p className="mt-2 text-[11px] leading-relaxed text-neutral-500">
             Exactly this would go to your <code className="font-mono">endpoint</code> via{' '}
             <code className="font-mono">navigator.sendBeacon</code> - no typed input.
           </p>
-          <pre className="scroll-thin mt-2 max-h-56 overflow-auto rounded-lg bg-ink-950/80 p-2.5 font-mono text-[10px] leading-relaxed text-slate-300">
+          <pre className="scroll-thin mt-2 max-h-56 overflow-auto rounded bg-neutral-50 p-2.5 font-mono text-[10px] leading-relaxed text-neutral-700">
             {beaconPayload(
               snapshot?.sessionId ?? '-',
               formatir?.version ?? '0.0.0',

@@ -30,7 +30,7 @@ export function Field({ def, value, error, onChange }: Props) {
           htmlFor={def.type === 'radio' ? undefined : id}
         >
           {def.label}
-          {def.required ? <span className="ml-1 text-brand-400">*</span> : null}
+          {def.required ? <span className="ml-1 text-blue-700">*</span> : null}
         </label>
       )}
 
@@ -73,7 +73,7 @@ export function Field({ def, value, error, onChange }: Props) {
           ))}
         </div>
       ) : def.type === 'checkbox' ? (
-        <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-300">
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-neutral-700">
           <input
             id={id}
             name={def.name}
@@ -83,7 +83,7 @@ export function Field({ def, value, error, onChange }: Props) {
             aria-invalid={error ? true : undefined}
             aria-describedby={describedBy}
             onChange={(e) => onChange(def.name, e.target.checked ? 'on' : '')}
-            className="mt-0.5 h-4 w-4 accent-brand-500"
+            className="mt-0.5 h-4 w-4 accent-blue-600"
           />
           <span>{def.label}</span>
         </label>
@@ -108,7 +108,7 @@ export function Field({ def, value, error, onChange }: Props) {
           {error}
         </p>
       ) : def.hint ? (
-        <p id={`${id}-hint`} className="mt-1.5 text-xs text-slate-500">
+        <p id={`${id}-hint`} className="mt-1.5 text-xs text-neutral-500">
           {def.hint}
         </p>
       ) : null}
