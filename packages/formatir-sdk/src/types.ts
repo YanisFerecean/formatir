@@ -19,7 +19,13 @@ export type MetricName =
   | 'form_dropoff'
   | 'js_error'
   | 'score'
-  | 'custom';
+  | 'custom'
+  // Opt-in metrics from `formatir/extras`.
+  | 'paste'
+  | 'autofill'
+  | 'field_revisit'
+  | 'step_change'
+  | 'thrash';
 
 /** Stable, non-PII reference to a form field. */
 export interface FieldRef {
@@ -120,6 +126,41 @@ export interface MetricPayloads {
   };
   score: { score: number; level: FrustrationLevel; signals: Record<string, number> };
   custom: Record<string, unknown>;
+  paste: {
+    /** How often this field received a paste. */
+    pastes: number;
+    /** Change of the value length caused by the paste. Never the content. */
+    delta: number;
+    /** True when the page cancelled the paste (`preventDefault()`). */
+    blocked: boolean;
+  };
+  autofill: {
+    /** Number of fields the browser filled in one go. */
+    count: number;
+    /** Keys of the autofilled fields. */
+    fields: string[];
+  };
+  field_revisit: {
+    /** Total focus count of the field, including this one. */
+    visits: number;
+    length: number;
+    changed: boolean;
+  };
+  step_change: {
+    from?: string;
+    to?: string;
+    /** Time spent on `from`, in ms. */
+    durationMs: number;
+    /** True when the user went back to an earlier step. */
+    back: boolean;
+    /** How often `to` has been entered so far. */
+    visits: number;
+  };
+  thrash: {
+    /** Direction changes of the pointer inside the window. */
+    reversals: number;
+    withinMs: number;
+  };
 }
 
 interface EventBase {
@@ -173,6 +214,15 @@ export interface ScoreOptions {
   levels?: [mild: number, elevated: number, severe: number];
 }
 
+/** Context handed to plugins - the same one the built-in detectors use. */
+export type { DetectorContext as PluginContext } from './core/context';
+
+/**
+ * A plugin is a detector: it subscribes to DOM events through `ctx.on()` (so
+ * `stop()` / `destroy()` clean up after it) and reports through `ctx.emit()`.
+ */
+export type { Plugin } from './core/context';
+
 export interface FormatirOptions {
   /** Collector URL. Without it Formatir stays local (observers only). */
   endpoint?: string;
@@ -213,6 +263,8 @@ export interface FormatirOptions {
   thresholds?: Partial<Thresholds>;
   /** Frustration score weights, saturation and level bounds. */
   score?: ScoreOptions;
+  /** Extra detectors, e.g. from `formatir/extras`. Attached on `start()`. */
+  plugins?: import('./core/context').Plugin[];
   /** Convenience hook, called for every event before listeners. */
   onEvent?: MetricListener;
   /**

@@ -1,31 +1,61 @@
 #!/usr/bin/env node
-/** Enforces the <6 KB gzipped budget for the published core ESM bundle. */
+/** Enforces gzip budgets per published entry (the core must stay < 6 KB). */
 import { gzipSync, brotliCompressSync } from 'node:zlib';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, appendFileSync } from 'node:fs';
 
-const BUDGET = 6 * 1024;
-const files = ['dist/index.mjs', 'dist/index.cjs', 'dist/index.global.js'];
+/** Budget per ESM entry, in bytes gzipped. CJS / IIFE builds are reported only. */
+const BUDGETS = {
+  'dist/index.mjs': 6 * 1024,
+  'dist/extras.mjs': 2 * 1024,
+};
+const files = Object.keys(BUDGETS).flatMap((f) => [
+  f,
+  f.replace(/\.mjs$/, '.cjs'),
+  f.replace(/\.mjs$/, '.global.js'),
+]);
 const kb = (n) => `${(n / 1024).toFixed(2)} KB`;
 
-let budgeted = 0;
+const rows = [];
+let failed = false;
 for (const file of files) {
   if (!existsSync(file)) continue;
   const raw = readFileSync(file);
   const gz = gzipSync(raw, { level: 9 }).length;
   const br = brotliCompressSync(raw).length;
-  const mark = file.endsWith('index.mjs') ? ' (budget)' : '';
-  if (mark) budgeted = gz;
+  const budget = BUDGETS[file];
+  const over = budget && gz > budget;
+  if (over) failed = true;
+  rows.push({ file, raw: raw.length, gz, br, budget });
   console.log(
-    `${file.padEnd(24)} raw ${kb(raw.length).padStart(9)}  gzip ${kb(gz).padStart(9)}  brotli ${kb(br).padStart(9)}${mark}`,
+    `${file.padEnd(24)} raw ${kb(raw.length).padStart(9)}  gzip ${kb(gz).padStart(9)}  brotli ${kb(br).padStart(9)}` +
+      (budget ? `  budget ${kb(budget)}${over ? '  EXCEEDED' : ''}` : ''),
   );
 }
 
-if (!budgeted) {
-  console.error('size: dist/index.mjs missing - run the build first');
+const missing = Object.keys(BUDGETS).filter((f) => !existsSync(f));
+if (missing.length) {
+  console.error(`size: ${missing.join(', ')} missing - run the build first`);
   process.exit(1);
 }
-if (budgeted > BUDGET) {
-  console.error(`size: budget exceeded - ${kb(budgeted)} gzipped > ${kb(BUDGET)}`);
+
+// In GitHub Actions, publish the table on the job summary.
+if (process.env.GITHUB_STEP_SUMMARY) {
+  const table = [
+    '### Bundle size',
+    '',
+    '| File | Raw | Gzip | Brotli | Budget |',
+    '| ---- | --: | ---: | -----: | -----: |',
+    ...rows.map(
+      (r) =>
+        `| \`${r.file}\` | ${kb(r.raw)} | ${kb(r.gz)} | ${kb(r.br)} | ${r.budget ? `${kb(r.budget)} ${r.gz > r.budget ? '❌' : '✅'}` : '-'} |`,
+    ),
+    '',
+  ].join('\n');
+  appendFileSync(process.env.GITHUB_STEP_SUMMARY, table);
+}
+
+if (failed) {
+  console.error('size: budget exceeded');
   process.exit(1);
 }
-console.log(`size: OK - ${kb(budgeted)} gzipped, ${kb(BUDGET - budgeted)} under budget`);
+console.log('size: OK - every entry is within its budget');

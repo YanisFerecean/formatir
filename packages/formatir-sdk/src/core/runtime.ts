@@ -130,6 +130,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
   const scorer = createScorer(opts.score);
 
   const teardown: (() => void)[] = [];
+  const steps = new Set<(to: string | undefined, from: string | undefined) => void>();
   const timers: ReturnType<typeof setTimeout>[] = [];
   let events = 0;
   let lastScore = -1;
@@ -214,6 +215,10 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
       timers.push(id);
     },
     cleanup: (fn) => void teardown.push(fn),
+    onStep(fn) {
+      steps.add(fn);
+      teardown.push(() => steps.delete(fn));
+    },
     ignored: (el) => !!opts.ignoreSelector && !!closestDeep(el, opts.ignoreSelector),
     inScope: (el) => !!el && (root === document || containsDeep(root, el)),
     watches: (el) => ctx.inScope(el) && !ctx.ignored(el),
@@ -227,6 +232,7 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     if (active || dead || !enabled || optedOut()) return;
     active = true;
     for (const detector of DETECTORS) detector(ctx);
+    for (const plugin of opts.plugins || []) plugin(ctx);
 
     // Registered after the detectors so their unload events make it into the batch.
     ctx.on(window, 'pagehide', () => transport.flush('pagehide'));
@@ -281,7 +287,9 @@ export function createInstance(options: FormatirOptions = {}): FormatirInstance 
     off: (metric, listener) => emitter.off(metric, listener as MetricListener),
     track: (name, data) => emit('custom', { name, ...data }),
     setStep(step) {
+      const from = state.step;
       state.step = step;
+      if (from !== step) steps.forEach((fn) => fn(step, from));
     },
     reportValidationError(field, reason = 'invalid') {
       const el = typeof field === 'string' ? null : field;

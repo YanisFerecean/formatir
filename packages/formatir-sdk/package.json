@@ -39,6 +39,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./extras": {
+      "import": {
+        "types": "./dist/extras.d.mts",
+        "default": "./dist/extras.mjs"
+      },
+      "require": {
+        "types": "./dist/extras.d.ts",
+        "default": "./dist/extras.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "files": [

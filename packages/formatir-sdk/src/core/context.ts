@@ -68,8 +68,13 @@ export interface DetectorContext {
   inScope(el: Element | null): boolean;
   /** Observable at all: in scope and not opted out. */
   watches(el: Element | null): boolean;
+  /** Called after `setStep()` changed the step. Auto-removed on stop. */
+  onStep(fn: (to: string | undefined, from: string | undefined) => void): void;
   /** Callbacks a detector exposes to the public instance API. */
   hooks: { dropoff?: () => void };
 }
 
 export type Detector = (ctx: DetectorContext) => void;
+
+/** Public name of a detector supplied through `options.plugins`. */
+export type Plugin = Detector;

@@ -11,6 +11,11 @@ export const WEIGHTS: Record<string, number> = {
   form_dropoff: 20,
   refill: 8,
   correction: 0.4,
+  // Signals from `formatir/extras`.
+  thrash: 8,
+  field_revisit: 3,
+  paste_blocked: 10,
+  step_back: 5,
 };
 
 export interface Scorer {
