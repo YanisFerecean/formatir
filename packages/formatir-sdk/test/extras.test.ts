@@ -106,6 +106,60 @@ describe('thrash', () => {
     expect(of('thrash')[0]?.data.reversals).toBeGreaterThanOrEqual(6);
   });
 
+  it('honours reversals, windowMs and minMovePx', () => {
+    const { of } = start({ plugins: [thrash({ reversals: 10, windowMs: 2000, minMovePx: 50 })] });
+    // 30 px moves are below minMovePx: no direction change counts.
+    for (let i = 0; i < 20; i++) {
+      move(i % 2 ? 130 : 100);
+      vi.advanceTimersByTime(50);
+    }
+    expect(of('thrash')).toHaveLength(0);
+    // 200 px moves count: the first sets a direction, each later one reverses
+    // it. 11 moves give 9 reversals - not enough ...
+    for (let i = 0; i < 11; i++) {
+      move(i % 2 ? 300 : 100);
+      vi.advanceTimersByTime(150);
+    }
+    expect(of('thrash')).toHaveLength(0);
+    // ... the 10th, still inside the 2 s window, is.
+    move(300);
+    expect(of('thrash')).toHaveLength(1);
+    expect(of('thrash')[0]?.data.reversals).toBe(10);
+  });
+
+  it('drops reversals that fall out of the window', () => {
+    const { of } = start({ plugins: [thrash({ windowMs: 500 })] });
+    for (let i = 0; i < 12; i++) {
+      move(i % 2 ? 300 : 100);
+      vi.advanceTimersByTime(200); // ~2.5 reversals per window, never 6
+    }
+    expect(of('thrash')).toHaveLength(0);
+  });
+
+  it('reports one event per burst, then stays quiet for 2 s', () => {
+    const { of } = start({ plugins: [thrash()] });
+    for (let i = 0; i < 30; i++) {
+      move(i % 2 ? 300 : 100);
+      vi.advanceTimersByTime(50); // 1.5 s of continuous thrashing
+    }
+    expect(of('thrash')).toHaveLength(1);
+    vi.advanceTimersByTime(1000);
+    for (let i = 0; i < 10; i++) {
+      move(i % 2 ? 300 : 100);
+      vi.advanceTimersByTime(50);
+    }
+    expect(of('thrash')).toHaveLength(2);
+  });
+
+  it('ignores movement outside the root', () => {
+    const { of } = start({ root: '#apply', plugins: [thrash()] });
+    for (let i = 0; i < 12; i++) {
+      move(i % 2 ? 300 : 100); // dispatched on <body>, outside #apply
+      vi.advanceTimersByTime(50);
+    }
+    expect(of('thrash')).toHaveLength(0);
+  });
+
   it('ignores steady movement', () => {
     const { of } = start({ plugins: [thrash()] });
     for (let i = 0; i < 20; i++) {
