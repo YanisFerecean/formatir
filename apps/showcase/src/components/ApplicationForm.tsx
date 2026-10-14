@@ -174,7 +174,8 @@ export const ApplicationForm = memo(function ApplicationForm({ formatir }: Props
   }
 
   return (
-    <section className="panel overflow-hidden">
+    // Formatir's root: the form plus its step header (the dead-click demo).
+    <section id="application" className="panel overflow-hidden">
       <div className="border-b border-slate-400/10 px-5 py-4 sm:px-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

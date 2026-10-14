@@ -23,6 +23,10 @@ export function useFormatir(): Telemetry {
   useEffect(() => {
     const instance = init({
       appId: 'formatir-showcase',
+      // Only the application form is observed - clicks on the rest of the page
+      // (hero, docs, telemetry panel) are ignored. A selector keeps working when
+      // React swaps the form for the success screen and back.
+      root: '#application',
       transport: 'none',
       flushIntervalMs: 0,
       thresholds: { hesitationMs: 3000, rageClicks: 3, rageWindowMs: 500 },
