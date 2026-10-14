@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -14,8 +15,14 @@ const base = process.env.VITE_BASE ?? (repository ? `/${repository}/` : '/');
 
 const sdkSource = fileURLToPath(new URL('../../packages/formatir-sdk/src', import.meta.url));
 
+const sdkVersion: string = JSON.parse(
+  readFileSync(new URL('../../packages/formatir-sdk/package.json', import.meta.url), 'utf8'),
+).version;
+
 export default defineConfig(({ command }) => ({
   base,
+  // The dev alias serves the SDK source, where tsup has not injected the version.
+  define: { __FORMATIR_VERSION__: JSON.stringify(sdkVersion) },
   plugins: [react(), tailwindcss(), llmsTxtPlugin()],
   resolve: {
     // Dev: edit the SDK and get HMR. Build: consume the published dist output.
