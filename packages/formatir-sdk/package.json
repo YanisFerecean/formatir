@@ -156,7 +156,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "happy-dom": "^21.0.1",
-    "react": "19.3.0",
+    "react": "19.3.1",
     "react-dom": "19.3.0",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
