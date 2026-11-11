@@ -152,16 +152,16 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "happy-dom": "^21.0.1",
+    "happy-dom": "^21.0.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "tsup": "8.5.1",
+    "tsup": "9.0.0",
     "typescript": "5.9.3",
-    "vitest": "^5.0.4",
-    "vue": "3.5.44"
+    "vitest": "^5.1.0",
+    "vue": "3.5.45"
   },
   "engines": {
     "node": ">=18"
